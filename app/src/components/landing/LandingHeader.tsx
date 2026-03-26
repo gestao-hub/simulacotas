@@ -15,15 +15,23 @@ export default function LandingHeader() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50)
+    const heroHeight = window.innerHeight * 0.85
+    const onScroll = () => {
+      setScrolled(window.scrollY > 50)
+      setHidden(window.scrollY > heroHeight)
+    }
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
-    <header className="fixed z-50 w-full px-2">
+    <header className={cn(
+      'fixed z-50 w-full px-2 transition-all duration-500',
+      hidden && '-translate-y-full opacity-0 pointer-events-none'
+    )}>
       <nav
         data-state={menuOpen ? 'active' : undefined}
         className={cn(
