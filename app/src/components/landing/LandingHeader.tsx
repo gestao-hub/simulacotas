@@ -33,11 +33,8 @@ export default function LandingHeader() {
       >
         <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
           <div className="flex w-full justify-between lg:w-auto">
-            <a href="/" className="flex items-center gap-2">
-              <img src="/assets/icone.png" alt="SC" className="h-8 w-8" />
-              <span className="text-lg font-bold text-[#0D1B4B]">
-                Simula<span className="text-[#AACC00]">Cotas</span>
-              </span>
+            <a href="/" className="flex items-center">
+              <img src="/assets/logo.png" alt="SimulaCotas" className="h-9" />
             </a>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
