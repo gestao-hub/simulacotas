@@ -13,8 +13,10 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="py-20 bg-gray-50/50">
-      <div className="mx-auto max-w-2xl px-6">
+    <section id="faq" className="relative py-20 bg-white overflow-hidden">
+      {/* Blob */}
+      <div className="gradient-blob gradient-blob-lime w-[350px] h-[350px] left-1/2 -translate-x-1/2 top-0 opacity-20" />
+      <div className="mx-auto max-w-2xl px-6 relative z-10">
         <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
           <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">Perguntas frequentes</h2>
         </motion.div>

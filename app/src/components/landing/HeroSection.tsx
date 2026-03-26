@@ -15,7 +15,11 @@ export default function HeroSection() {
   const navigate = useNavigate()
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden bg-white">
+      {/* Mesh gradient background */}
+      <div className="hero-mesh-bg" />
+      {/* Glow orb */}
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[600px] w-[600px] rounded-full animate-orb-pulse" style={{ background: 'radial-gradient(circle, rgba(204,238,0,0.15), transparent 70%)', filter: 'blur(60px)' }} />
       <FloatingShapes accentColor="#CCEE00" secondaryColor="#0D1B4B" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-16 lg:pt-48 lg:pb-24">
