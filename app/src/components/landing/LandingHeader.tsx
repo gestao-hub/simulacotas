@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { LiquidButton } from '@/components/ui/liquid-glass-button'
 
 const navLinks = [
   { label: 'Simulador', href: '#simulador' },
@@ -72,15 +72,15 @@ export default function LandingHeader() {
               </ul>
             </div>
             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className={cn(scrolled && 'lg:hidden')}>
+              <LiquidButton size="sm" onClick={() => navigate('/login')} className={cn('text-[#0D1B4B] font-semibold', scrolled && 'lg:hidden')}>
                 Entrar
-              </Button>
-              <Button size="sm" onClick={() => navigate('/login')} className={cn('bg-[#0D1B4B]', scrolled && 'lg:hidden')}>
+              </LiquidButton>
+              <LiquidButton size="sm" onClick={() => navigate('/login')} className={cn('text-[#0D1B4B] font-bold', scrolled && 'lg:hidden')}>
                 Testar Grátis
-              </Button>
-              <Button size="sm" onClick={() => navigate('/login')} className={cn('bg-[#0D1B4B]', scrolled ? 'lg:inline-flex' : 'hidden')}>
+              </LiquidButton>
+              <LiquidButton size="sm" onClick={() => navigate('/login')} className={cn('text-[#0D1B4B] font-bold', scrolled ? 'lg:inline-flex' : 'hidden')}>
                 Começar
-              </Button>
+              </LiquidButton>
             </div>
           </div>
         </div>

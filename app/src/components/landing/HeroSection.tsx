@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { AnimatedGroup } from '@/components/ui/animated-group'
 import FloatingShapes from '@/components/ui/floating-shapes'
-import { Button } from '@/components/ui/button'
+import { LiquidButton } from '@/components/ui/liquid-glass-button'
 import { ChevronDown } from 'lucide-react'
 
 const transitionVariants = {
@@ -38,22 +38,22 @@ export default function HeroSection() {
               Para corretores que querem vender mais, não gerenciar planilhas.
             </p>
 
-            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-              <Button
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <LiquidButton
                 onClick={() => navigate('/login')}
                 size="lg"
-                className="gap-2 bg-[#0D1B4B] px-8 text-base font-bold shadow-elevation-2 hover:shadow-elevation-3 transition-shadow"
+                className="text-[#0D1B4B] font-bold text-base"
               >
                 Testar Grátis 7 Dias
-              </Button>
-              <Button
+              </LiquidButton>
+              <LiquidButton
                 variant="outline"
                 size="lg"
-                className="gap-2 text-base font-semibold"
+                className="text-[#0D1B4B] font-semibold text-base"
                 onClick={() => document.getElementById('simulador')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Ver Como Funciona <ChevronDown size={16} />
-              </Button>
+              </LiquidButton>
             </div>
 
             {/* Decorative cards mockup */}
