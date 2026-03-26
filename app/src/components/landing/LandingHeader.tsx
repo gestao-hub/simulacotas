@@ -31,7 +31,7 @@ export default function LandingHeader() {
           scrolled && 'max-w-4xl rounded-2xl border border-white/50 bg-white/70 backdrop-blur-xl shadow-elevation-2 lg:px-5'
         )}
       >
-        <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
+        <div className="relative flex flex-wrap items-center justify-between gap-6 py-1 lg:gap-0 lg:py-1.5">
           <div className="flex w-full justify-between lg:w-auto">
             <a href="/" className="flex items-center">
               <img src="/assets/logo.png" alt="SimulaCotas" className="h-[108px]" />
