@@ -11,9 +11,9 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative py-20 bg-section-muted overflow-hidden">
+    <section className="relative py-20 overflow-hidden">
       {/* Blob */}
-      <div className="gradient-blob gradient-blob-navy w-[400px] h-[400px] -right-48 top-0 opacity-25 animate-float-slow" />
+      <div className="gradient-blob gradient-blob-navy w-[400px] h-[400px] -right-48 top-0 opacity-15 animate-float-slow" />
       <div className="mx-auto max-w-6xl px-6 relative z-10">
         <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">O que corretores dizem</h2>

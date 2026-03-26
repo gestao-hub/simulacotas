@@ -10,9 +10,9 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <section className="relative py-20 bg-white overflow-hidden">
+    <section className="relative py-20 overflow-hidden">
       {/* Blob */}
-      <div className="gradient-blob gradient-blob-lime w-[400px] h-[400px] -left-48 bottom-0 opacity-30 animate-float" />
+      <div className="gradient-blob gradient-blob-lime w-[400px] h-[400px] -left-48 bottom-0 opacity-20 animate-float" />
       <div className="mx-auto max-w-5xl px-6 relative z-10">
         <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
           <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">Como funciona</h2>

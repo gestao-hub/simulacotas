@@ -20,10 +20,10 @@ export default function PricingSection() {
   const navigate = useNavigate()
 
   return (
-    <section id="pricing" className="relative py-20 overflow-hidden" style={{ background: 'linear-gradient(180deg, white 0%, hsl(80 30% 96%) 30%, hsl(80 30% 96%) 70%, white 100%)' }}>
+    <section id="pricing" className="relative py-20 overflow-hidden">
       {/* Blobs */}
-      <div className="gradient-blob gradient-blob-lime w-[500px] h-[500px] left-1/4 top-0 opacity-40 animate-float" />
-      <div className="gradient-blob gradient-blob-navy w-[400px] h-[400px] right-1/4 bottom-0 opacity-25 animate-float-slow" />
+      <div className="gradient-blob gradient-blob-lime w-[500px] h-[500px] left-1/4 top-0 opacity-20 animate-float" />
+      <div className="gradient-blob gradient-blob-navy w-[400px] h-[400px] right-1/4 bottom-0 opacity-15 animate-float-slow" />
       <div className="mx-auto max-w-lg px-6 relative z-10">
         <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-8">
           <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">Plano único. Tudo incluso.</h2>

@@ -13,65 +13,22 @@ import FAQSection from '@/components/landing/FAQSection'
 import CTAFinalSection from '@/components/landing/CTAFinalSection'
 import LandingFooter from '@/components/landing/LandingFooter'
 
-function Divider({ from, to }: { from: string; to: string }) {
-  return <div className="h-20 md:h-28" style={{ background: `linear-gradient(to bottom, ${from}, ${to})` }} />
-}
-
 export default function LandingPage() {
   return (
-    <div className="min-h-screen overflow-hidden">
+    <div className="min-h-screen overflow-hidden bg-[#f8f9fa]">
       <GlassFilter />
       <LandingHeader />
-
-      {/* Hero — white with mesh gradient + orbs */}
       <HeroSection />
-
-      {/* Logo Cloud — white */}
       <LogoCloudSection />
-
-      {/* Stats — DARK navy section */}
       <StatsSection />
-
-      {/* Problem — muted lime bg */}
       <ProblemSection />
-
-      {/* Divider muted → white */}
-      <Divider from="hsl(80 30% 96%)" to="white" />
-
-      {/* Simulador — white with blobs */}
       <SimuladorSection />
-
-      {/* Divider white → muted */}
-      <Divider from="white" to="hsl(80 30% 96%)" />
-
-      {/* Features — muted lime bg */}
       <FeaturesSection />
-
-      {/* Divider muted → white */}
-      <Divider from="hsl(80 30% 96%)" to="white" />
-
-      {/* How it works — white with blob */}
       <HowItWorksSection />
-
-      {/* Divider white → muted */}
-      <Divider from="white" to="hsl(80 30% 96%)" />
-
-      {/* Testimonials — muted bg */}
       <TestimonialsSection />
-
-      {/* Divider muted → white */}
-      <Divider from="hsl(80 30% 96%)" to="white" />
-
-      {/* Pricing — white */}
       <PricingSection />
-
-      {/* FAQ — white with blob */}
       <FAQSection />
-
-      {/* CTA Final — dark navy */}
       <CTAFinalSection />
-
-      {/* Footer — dark navy */}
       <LandingFooter />
     </div>
   )

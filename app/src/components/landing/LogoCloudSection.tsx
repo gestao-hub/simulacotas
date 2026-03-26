@@ -5,7 +5,7 @@ const admins = ['Itaú', 'Banco do Brasil', 'Santander', 'Magalu', 'Reconomia', 
 
 export default function LogoCloudSection() {
   return (
-    <section className="bg-white pb-16 md:pb-24">
+    <section className="pb-16 md:pb-24">
       <div className="group relative mx-auto max-w-6xl px-6">
         <div className="flex flex-col items-center md:flex-row">
           <div className="inline md:max-w-44 md:border-r md:pr-6">

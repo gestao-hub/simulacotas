@@ -38,10 +38,10 @@ export default function SimuladorSection() {
   ]
 
   return (
-    <section id="simulador" className="relative py-20 bg-white overflow-hidden">
+    <section id="simulador" className="relative py-20 overflow-hidden">
       {/* Blobs */}
-      <div className="gradient-blob gradient-blob-lime w-[500px] h-[500px] right-0 top-1/4 opacity-30" style={{ animationDelay: '3s' }} />
-      <div className="gradient-blob gradient-blob-navy w-[350px] h-[350px] -left-32 bottom-0 opacity-25 animate-float-slow" />
+      <div className="gradient-blob gradient-blob-lime w-[500px] h-[500px] right-0 top-1/4 opacity-20" />
+      <div className="gradient-blob gradient-blob-navy w-[350px] h-[350px] -left-32 bottom-0 opacity-15 animate-float-slow" />
       <div className="mx-auto max-w-3xl px-6 relative z-10">
         <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-8">
           <span className="inline-block rounded-full bg-[#CCEE00] px-4 py-1.5 text-xs font-black uppercase tracking-wider text-[#0D1B4B] glow-lime-sm">
