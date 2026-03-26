@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simulador de Consórcio — SimulaCotas</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0D1B4B;
+    --navy-light: #152260;
+    --lime: #CCEE00;
+    --lime-dark: #AACC00;
+    --lime-faint: #F5FFCC;
+    --white: #FFFFFF;
+    --gray-50: #F8F9FA;
+    --gray-100: #F1F3F5;
+    --gray-200: #E4E8EE;
+    --gray-400: #9CA3AF;
+    --gray-600: #6B7280;
+    --red: #EF4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--gray-50);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 24px rgba(13,27,75,0.35);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand { display: flex; align-items: center; gap: 14px; }
+  .brand-text-wrap { display: flex; flex-direction: column; }
+  .brand-name { font-size: 22px; font-weight: 900; }
+  .brand-name span:first-child { color: var(--white); }
+  .brand-name span:last-child { color: var(--lime); }
+  .brand-sub { font-size: 10px; color: rgba(204,238,0,0.7); font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 1px; }
+  .header-badge { font-size: 12px; color: rgba(255,255,255,0.45); font-weight: 600; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 32px;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 14px 22px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-600);
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    outline: none;
+  }
+  .tab-btn:hover { color: var(--navy); }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--lime); font-weight: 900; }
+
+  /* ── LEGEND ── */
+  .legend-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+    padding: 9px 32px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--gray-600); font-weight: 600; }
+  .legend-dot {
+    width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0;
+  }
+  .legend-dot.editable { background: var(--lime-faint); border: 2px solid var(--lime); }
+  .legend-dot.calc { background: var(--gray-100); border: 2px solid var(--gray-200); }
+  .legend-dot.result { background: var(--navy); border: 2px solid var(--lime); }
+
+  /* ── MAIN CONTENT ── */
+  .main { max-width: 980px; margin: 0 auto; padding: 28px 32px 60px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── ALERT BOX ── */
+  .plan-alert {
+    background: var(--lime-faint);
+    border: 1px solid rgba(204,238,0,0.5);
+    border-left: 4px solid var(--lime-dark);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--navy);
+  }
+  .plan-alert strong { font-weight: 900; }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    display: flex; align-items: center; gap: 10px;
+    margin: 22px 0 14px;
+  }
+  .section-title-bar { width: 4px; height: 20px; border-radius: 2px; background: var(--lime); flex-shrink: 0; }
+  .section-title h3 { font-size: 12px; font-weight: 900; color: var(--navy); text-transform: uppercase; letter-spacing: 0.09em; }
+
+  /* ── FIELD ── */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 11px; font-weight: 800; color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .field label .hint { font-weight: 500; text-transform: none; color: var(--gray-600); font-size: 10px; }
+  .field label .lock { font-size: 11px; color: var(--gray-400); }
+
+  /* Input wrapper */
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input-prefix {
+    position: absolute; left: 10px; font-size: 12px; color: var(--gray-600);
+    font-weight: 700; pointer-events: none; z-index: 1;
+  }
+  .input-icon-right {
+    position: absolute; right: 9px; font-size: 13px; pointer-events: none;
+  }
+
+  input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 9px 32px 9px 10px;
+    border: 2px solid var(--lime);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Nunito', sans-serif;
+    background: var(--lime-faint);
+    color: var(--navy);
+    font-weight: 800;
+    outline: none;
+    transition: box-shadow 0.15s, border-color 0.15s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type="number"].has-prefix { padding-left: 30px; }
+  input[type="text"] { padding: 9px 10px; }
+  input:focus { box-shadow: 0 0 0 3px rgba(204,238,0,0.35); border-color: var(--lime-dark); }
+
+  /* Calc field */
+  .calc-field {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--gray-100);
+    border: 2px solid var(--gray-200);
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--navy);
+    min-height: 40px;
+    display: flex; align-items: center;
+    user-select: none;
+  }
+  .calc-field.highlight {
+    background: var(--navy);
+    border-color: var(--lime);
+    color: var(--lime);
+    font-size: 15px;
+  }
+  .calc-field.empty { color: var(--gray-400); font-weight: 600; }
+
+  /* ── DATE FIELD ── */
+  .date-field {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--gray-100);
+    border: 2px solid var(--gray-200);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-600);
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--gray-200); margin: 18px 0; }
+
+  /* ── COTA CARD ── */
+  .cota-card {
+    border: 2px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 18px;
+    background: var(--white);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: border-color 0.15s;
+  }
+  .cota-card:hover { border-color: rgba(204,238,0,0.5); }
+  .cota-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .cota-badge {
+    background: var(--navy); color: var(--lime);
+    border-radius: 8px; width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 15px;
+  }
+  .cota-title { font-weight: 900; font-size: 14px; color: var(--navy); }
+
+  /* ── RESUMO CARD ── */
+  .resumo-card {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 16px;
+    padding: 22px 26px;
+    margin-top: 24px;
+    box-shadow: 0 10px 36px rgba(13,27,75,0.3);
+  }
+  .resumo-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .resumo-label {
+    color: var(--lime); font-weight: 900; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .resumo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .resumo-item {
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--lime);
+  }
+  .resumo-item-label {
+    font-size: 10px; color: rgba(255,255,255,0.5);
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 5px;
+  }
+  .resumo-item-value { font-size: 15px; font-weight: 900; color: var(--white); }
+
+  /* ── AJUDA ── */
+  .ajuda-hero {
+    background: linear-gradient(135deg, var(--navy), var(--navy-light));
+    border-radius: 16px;
+    padding: 26px 28px;
+    margin-bottom: 26px;
+    color: var(--white);
+  }
+  .ajuda-hero-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .ajuda-hero-title { font-size: 20px; font-weight: 900; }
+  .ajuda-hero-sub { font-size: 12px; color: rgba(204,238,0,0.8); font-weight: 700; }
+  .ajuda-hero p { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.8); }
+
+  .ajuda-section-title {
+    font-size: 12px; font-weight: 900; color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.09em; margin: 0 0 14px;
+  }
+
+  .planos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 26px; }
+  .plano-card {
+    border-radius: 12px; padding: 16px;
+    background: var(--white); border: 2px solid var(--gray-200);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .plano-tag {
+    display: inline-block; border-radius: 6px;
+    padding: 3px 10px; font-size: 11px; font-weight: 900;
+    color: var(--navy); margin-bottom: 10px;
+  }
+  .plano-card p { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+  .glossario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 26px; }
+  .glossario-item {
+    display: flex; gap: 12px; padding: 14px 16px;
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: 10px;
+  }
+  .glossario-icon { font-size: 20px; flex-shrink: 0; }
+  .glossario-title { font-weight: 800; font-size: 13px; color: var(--navy); margin-bottom: 4px; }
+  .glossario-desc { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+
+  .dica-box {
+    padding: 16px 20px; background: var(--lime-faint);
+    border-radius: 12px; border-left: 4px solid var(--lime-dark);
+  }
+  .dica-box p { font-size: 13px; color: var(--navy); line-height: 1.7; margin-top: 6px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 22px; margin-top: 20px;
+    border-top: 1px solid var(--gray-200);
+    font-size: 12px; color: var(--gray-400); font-weight: 600;
+  }
+
+  @media (max-width: 700px) {
+    header { padding: 14px 16px; }
+    .tab-bar, .legend-bar, .main { padding-left: 16px; padding-right: 16px; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+    .planos-grid, .glossario-grid { grid-template-columns: 1fr; }
+    .resumo-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <svg width="42" height="50" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M55 5 C80 5 95 25 95 50 C95 75 75 95 55 105 C45 110 35 105 28 98 C18 88 15 72 20 58 C25 44 35 38 42 32 C48 27 50 18 55 5Z" fill="#CCEE00"/>
+      <path d="M42 32 C35 45 30 58 35 68 C40 78 52 80 55 72 C58 64 52 52 48 42 C45 35 43 33 42 32Z" fill="#0D1B4B"/>
+    </svg>
+    <div class="brand-text-wrap">
+      <div class="brand-name"><span>Simula</span><span>Cotas</span></div>
+      <div class="brand-sub">Simulador de Consórcio</div>
+    </div>
+  </div>
+  <div class="header-badge">Imóveis · Plano Estruturado</div>
+</header>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('linear', this)">📈 Linear</button>
+  <button class="tab-btn" onclick="switchTab('r7030', this)">📊 Reduzida 70/30</button>
+  <button class="tab-btn" onclick="switchTab('r5050', this)">📉 Reduzida 50/50</button>
+  <button class="tab-btn" onclick="switchTab('ajuda', this)">❓ Ajuda</button>
+</div>
+
+<!-- LEGEND -->
+<div class="legend-bar">
+  <div class="legend-item"><div class="legend-dot editable"></div> Campo editável — preencha você</div>
+  <div class="legend-item"><div class="legend-dot calc"></div> 🔒 Campo calculado — atualiza automático</div>
+  <div class="legend-item"><div class="legend-dot result"></div> Resultado principal</div>
+</div>
+
+<div class="main">
+
+  <!-- ══════════ LINEAR ══════════ -->
+  <div id="panel-linear" class="tab-panel active">
+    <div class="plan-alert">
+      <strong>Plano Linear:</strong> Uma única cota com parcelas iguais durante todo o plano. Ideal para quem busca previsibilidade e simplicidade.
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Cliente</label>
+        <input type="text" id="lin-cliente" placeholder="Nome do cliente" oninput="calcLinear()" />
+      </div>
+      <div class="field">
+        <label><span class="lock">🔒</span> Data</label>
+        <div class="date-field" id="lin-data">—</div>
+      </div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Informações do Crédito</h3></div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Valor do Bem</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R$</span>
+          <input type="number" id="lin-bem" class="has-prefix" value="400000" oninput="calcLinear()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Prazo <span class="hint">em meses</span></label>
+        <div class="input-wrap">
+          <input type="number" id="lin-prazo" value="200" oninput="calcLinear()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Qtde. de Cotas</label>
+        <div class="input-wrap">
+          <input type="number" id="lin-cotas" value="1" oninput="calcLinear()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Taxas</h3></div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Taxa Adm %</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="lin-adm" class="has-prefix" value="20" oninput="calcLinear()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>% FR — Fundo de Reserva</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="lin-fr" class="has-prefix" value="3" oninput="calcLinear()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label><span class="lock">🔒</span> % Mensal</label>
+        <div class="calc-field" id="lin-mensal">—</div>
+      </div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Estimativa de Lance</h3></div>
+    <div class="grid-2">
+      <div class="field">
+        <label>% Lance</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="lin-lance" class="has-prefix" value="50" oninput="calcLinear()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field"><label><span class="lock">🔒</span> Vl. Total Lance</label><div class="calc-field" id="lin-total-lance">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Vl. Lance Embutido (0,3%)</label><div class="calc-field" id="lin-lance-emb">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> VL. Lance — Recursos Próprios</label><div class="calc-field highlight" id="lin-lance-rec">—</div></div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Valores Calculados</h3></div>
+    <div class="grid-3">
+      <div class="field"><label><span class="lock">🔒</span> Valor Total</label><div class="calc-field" id="lin-valor-total">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Parcela Base</label><div class="calc-field" id="lin-parcela">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Vl. Bem + Taxas</label><div class="calc-field" id="lin-bem-taxas">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Crédito Líquido</label><div class="calc-field" id="lin-credito">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Parcela Pós-Lance</label><div class="calc-field highlight" id="lin-parcela-pos">—</div></div>
+    </div>
+
+    <div class="resumo-card">
+      <div class="resumo-header">
+        <svg width="20" height="24" viewBox="0 0 100 120" fill="none"><path d="M55 5 C80 5 95 25 95 50 C95 75 75 95 55 105 C45 110 35 105 28 98 C18 88 15 72 20 58 C25 44 35 38 42 32 C48 27 50 18 55 5Z" fill="#CCEE00"/><path d="M42 32 C35 45 30 58 35 68 C40 78 52 80 55 72 C58 64 52 52 48 42 C45 35 43 33 42 32Z" fill="#0D1B4B"/></svg>
+        <span class="resumo-label">Resumo da Simulação</span>
+      </div>
+      <div class="resumo-grid">
+        <div class="resumo-item"><div class="resumo-item-label">Carta de Crédito</div><div class="resumo-item-value" id="res-lin-carta">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Parcela Inicial</div><div class="resumo-item-value" id="res-lin-parcela">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Parcela Pós-Lance</div><div class="resumo-item-value" id="res-lin-posLance">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Prazo</div><div class="resumo-item-value" id="res-lin-prazo">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Lance Recursos Próprios</div><div class="resumo-item-value" id="res-lin-rec">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Crédito Líquido</div><div class="resumo-item-value" id="res-lin-credito">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ REDUZIDA 70/30 ══════════ -->
+  <div id="panel-r7030" class="tab-panel">
+    <div class="plan-alert">
+      <strong>Plano Reduzida 70/30:</strong> Três cotas combinadas. 30% do valor total é dado como entrada e 70% é financiado. Maximiza crédito com menor esforço mensal inicial.
+    </div>
+
+    <div class="grid-4" style="margin-bottom:16px">
+      <div class="field">
+        <label>Cliente</label>
+        <input type="text" id="r70-cliente" placeholder="Nome do cliente" oninput="calcR70()" />
+      </div>
+      <div class="field">
+        <label>Taxa Adm %</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="r70-adm" class="has-prefix" value="20" oninput="calcR70()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>% FR — Fundo Reserva</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="r70-fr" class="has-prefix" value="3" oninput="calcR70()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label><span class="lock">🔒</span> Data</label>
+        <div class="date-field" id="r70-data">—</div>
+      </div>
+    </div>
+
+    <!-- COTAS -->
+    <div id="r70-cotas-wrap"></div>
+
+    <div class="resumo-card">
+      <div class="resumo-header">
+        <svg width="20" height="24" viewBox="0 0 100 120" fill="none"><path d="M55 5 C80 5 95 25 95 50 C95 75 75 95 55 105 C45 110 35 105 28 98 C18 88 15 72 20 58 C25 44 35 38 42 32 C48 27 50 18 55 5Z" fill="#CCEE00"/><path d="M42 32 C35 45 30 58 35 68 C40 78 52 80 55 72 C58 64 52 52 48 42 C45 35 43 33 42 32Z" fill="#0D1B4B"/></svg>
+        <span class="resumo-label">Resumo da Simulação</span>
+      </div>
+      <div class="resumo-grid">
+        <div class="resumo-item"><div class="resumo-item-label">Carta de Crédito Total</div><div class="resumo-item-value" id="r70-res-carta">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Total de Lance</div><div class="resumo-item-value" id="r70-res-lance">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Prazo Médio</div><div class="resumo-item-value" id="r70-res-prazo">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Recursos Próprios Total</div><div class="resumo-item-value" id="r70-res-rec">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ REDUZIDA 50/50 ══════════ -->
+  <div id="panel-r5050" class="tab-panel">
+    <div class="plan-alert">
+      <strong>Plano Reduzida 50/50:</strong> A parcela é dividida em duas partes iguais — 50% como entrada e 50% financiado. Reduz o saldo devedor e a parcela mensal futura.
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Cliente</label>
+        <input type="text" id="r50-cliente" placeholder="Nome do cliente" oninput="calcR50()" />
+      </div>
+      <div class="field">
+        <label><span class="lock">🔒</span> Data</label>
+        <div class="date-field" id="r50-data">—</div>
+      </div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Informações do Crédito</h3></div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Valor do Bem</label>
+        <div class="input-wrap">
+          <span class="input-prefix">R$</span>
+          <input type="number" id="r50-bem" class="has-prefix" value="420000" oninput="calcR50()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Prazo <span class="hint">em meses</span></label>
+        <div class="input-wrap">
+          <input type="number" id="r50-prazo" value="220" oninput="calcR50()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Qtde. de Cotas</label>
+        <div class="input-wrap">
+          <input type="number" id="r50-cotas" value="1" oninput="calcR50()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Taxas</h3></div>
+    <div class="grid-3">
+      <div class="field">
+        <label>Taxa Adm %</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="r50-adm" class="has-prefix" value="20" oninput="calcR50()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>% FR — Fundo Reserva</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="r50-fr" class="has-prefix" value="3" oninput="calcR50()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field">
+        <label><span class="lock">🔒</span> % Mensal</label>
+        <div class="calc-field" id="r50-mensal">—</div>
+      </div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Estimativa de Lance</h3></div>
+    <div class="grid-2">
+      <div class="field">
+        <label>% Lance</label>
+        <div class="input-wrap">
+          <span class="input-prefix">%</span>
+          <input type="number" id="r50-lance" class="has-prefix" value="40" oninput="calcR50()" />
+          <span class="input-icon-right">✏️</span>
+        </div>
+      </div>
+      <div class="field"><label><span class="lock">🔒</span> Vl. Total Lance</label><div class="calc-field" id="r50-total-lance">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Lance Embutido (0,3%)</label><div class="calc-field" id="r50-lance-emb">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Recursos Próprios</label><div class="calc-field highlight" id="r50-lance-rec">—</div></div>
+    </div>
+
+    <div class="section-title"><div class="section-title-bar"></div><h3>Estrutura 50/50</h3></div>
+    <div class="grid-3">
+      <div class="field"><label><span class="lock">🔒</span> Valor Total</label><div class="calc-field" id="r50-valor-total">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Parcela Base</label><div class="calc-field" id="r50-parcela">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Parcela Entrada (50%)</label><div class="calc-field" id="r50-parcela-meia">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Saldo a Financiar (50%)</label><div class="calc-field" id="r50-saldo">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Crédito Líquido</label><div class="calc-field" id="r50-credito">—</div></div>
+      <div class="field"><label><span class="lock">🔒</span> Parcela Pós-Lance</label><div class="calc-field highlight" id="r50-parcela-pos">—</div></div>
+    </div>
+
+    <div class="resumo-card">
+      <div class="resumo-header">
+        <svg width="20" height="24" viewBox="0 0 100 120" fill="none"><path d="M55 5 C80 5 95 25 95 50 C95 75 75 95 55 105 C45 110 35 105 28 98 C18 88 15 72 20 58 C25 44 35 38 42 32 C48 27 50 18 55 5Z" fill="#CCEE00"/><path d="M42 32 C35 45 30 58 35 68 C40 78 52 80 55 72 C58 64 52 52 48 42 C45 35 43 33 42 32Z" fill="#0D1B4B"/></svg>
+        <span class="resumo-label">Resumo da Simulação</span>
+      </div>
+      <div class="resumo-grid">
+        <div class="resumo-item"><div class="resumo-item-label">Carta de Crédito</div><div class="resumo-item-value" id="r50-res-carta">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Entrada (50%)</div><div class="resumo-item-value" id="r50-res-entrada">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Saldo Financiado</div><div class="resumo-item-value" id="r50-res-saldo">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Parcela Pós-Lance</div><div class="resumo-item-value" id="r50-res-posLance">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Prazo</div><div class="resumo-item-value" id="r50-res-prazo">—</div></div>
+        <div class="resumo-item"><div class="resumo-item-label">Crédito Líquido</div><div class="resumo-item-value" id="r50-res-credito">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ AJUDA ══════════ -->
+  <div id="panel-ajuda" class="tab-panel">
+    <div class="ajuda-hero">
+      <div class="ajuda-hero-header">
+        <svg width="38" height="46" viewBox="0 0 100 120" fill="none"><path d="M55 5 C80 5 95 25 95 50 C95 75 75 95 55 105 C45 110 35 105 28 98 C18 88 15 72 20 58 C25 44 35 38 42 32 C48 27 50 18 55 5Z" fill="#CCEE00"/><path d="M42 32 C35 45 30 58 35 68 C40 78 52 80 55 72 C58 64 52 52 48 42 C45 35 43 33 42 32Z" fill="#0D1B4B"/></svg>
+        <div>
+          <div class="ajuda-hero-title">Simulador de Consórcio</div>
+          <div class="ajuda-hero-sub">by SimulaCotas — Guia de uso</div>
+        </div>
+      </div>
+      <p>Este simulador calcula automaticamente todos os valores de uma proposta de consórcio de imóvel. Basta preencher os campos editáveis — destacados com borda verde — e o sistema recalcula tudo em tempo real, sem precisar apertar nenhum botão.</p>
+    </div>
+
+    <h3 class="ajuda-section-title">Os 3 Planos Disponíveis</h3>
+    <div class="planos-grid">
+      <div class="plano-card">
+        <div class="plano-tag" style="background:#CCEE00">📈 LINEAR</div>
+        <p>Uma cota única com parcelas iguais durante todo o plano. Mais simples e previsível. Ideal para imóveis de valor único e quem busca estabilidade no orçamento.</p>
+      </div>
+      <div class="plano-card">
+        <div class="plano-tag" style="background:#FFA726">📊 REDUZIDA 70/30</div>
+        <p>Combinação de 3 cotas. 30% do valor total é dado como entrada e os 70% restantes são financiados. Excelente para quem tem capital disponível e quer maximizar o crédito.</p>
+      </div>
+      <div class="plano-card">
+        <div class="plano-tag" style="background:#42A5F5">📉 REDUZIDA 50/50</div>
+        <p>A parcela é dividida ao meio — 50% como entrada e 50% financiado. Ideal para quem quer reduzir a parcela mensal futura e tem parte do valor disponível.</p>
+      </div>
+    </div>
+
+    <h3 class="ajuda-section-title">Glossário dos Campos</h3>
+    <div class="glossario-grid">
+      <div class="glossario-item">
+        <div class="glossario-icon">✏️</div>
+        <div><div class="glossario-title">Campos Editáveis (fundo verde-claro)</div><div class="glossario-desc">São os campos que você deve preencher: Valor do Bem, Prazo, Taxas e % de Lance. O sistema calcula todo o resto automaticamente.</div></div>
+      </div>
+      <div class="glossario-item">
+        <div class="glossario-icon">🔒</div>
+        <div><div class="glossario-title">Campos Calculados (fundo cinza)</div><div class="glossario-desc">Calculados automaticamente e travados para edição. Mudam em tempo real conforme você preenche os campos editáveis.</div></div>
+      </div>
+      <div class="glossario-item">
+        <div class="glossario-icon">📊</div>
+        <div><div class="glossario-title">% Mensal</div><div class="glossario-desc">Calculado pela fórmula: (Taxa Adm + % FR) ÷ Prazo. Representa o custo mensal efetivo do consórcio.</div></div>
+      </div>
+      <div class="glossario-item">
+        <div class="glossario-icon">🏦</div>
+        <div><div class="glossario-title">Vl. Total Lance</div><div class="glossario-desc">Valor do Bem × % de Lance. É o total ofertado como lance para antecipar a contemplação.</div></div>
+      </div>
+      <div class="glossario-item">
+        <div class="glossario-icon">🧾</div>
+        <div><div class="glossario-title">Lance Embutido (0,3%)</div><div class="glossario-desc">Parcela do lance já embutida na própria carta de crédito. Equivale a 0,3% do Valor Total.</div></div>
+      </div>
+      <div class="glossario-item">
+        <div class="glossario-icon">💰</div>
+        <div><div class="glossario-title">Recursos Próprios</div><div class="glossario-desc">Vl. Total Lance − Lance Embutido. É o valor que o cliente precisa ter disponível do próprio bolso para dar o lance.</div></div>
+      </div>
+      <div class="glossario-item">
+        <div class="glossario-icon">📋</div>
+        <div><div class="glossario-title">Crédito Líquido</div><div class="glossario-desc">Valor Total − Lance Embutido. É o crédito que o cliente efetivamente recebe após ser contemplado.</div></div>
+      </div>
+      <div class="glossario-item">
+        <div class="glossario-icon">📉</div>
+        <div><div class="glossario-title">Parcela Pós-Lance</div><div class="glossario-desc">Parcela que o cliente pagará após ser contemplado. Calculada pelo saldo restante dividido pelas parcelas que sobram.</div></div>
+      </div>
+    </div>
+
+    <div class="dica-box">
+      <strong style="font-size:13px;color:var(--navy)">💡 Dica para uso</strong>
+      <p>Comece sempre pelo <strong>Valor do Bem</strong> e o <strong>Prazo</strong>. As taxas costumam ser padrão por administradora. Ajuste o <strong>% de Lance</strong> para ver como o valor dos recursos próprios afeta a parcela pós-contemplação. Use o <strong>Resumo</strong> ao final de cada aba para apresentar os números ao cliente de forma limpa.</p>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<footer>
+  SimulaCotas © <span id="footer-year"></span> · Simulação meramente informativa · Valores sujeitos a confirmação pela administradora
+</footer>
+
+<script>
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const fmt = (v) => {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+const fmtPct = (v) => {
+  if (v == null || isNaN(v) || !isFinite(v)) return '—';
+  return Number(v).toFixed(4).replace('.', ',') + '%';
+};
+const val = (id) => parseFloat(document.getElementById(id)?.value) || 0;
+const set = (id, txt, highlight) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = txt;
+  if (highlight !== undefined) {
+    el.classList.toggle('highlight', highlight);
+    el.classList.toggle('empty', txt === '—');
+  } else {
+    el.classList.toggle('empty', txt === '—');
+  }
+};
+
+const today = () => new Date().toLocaleDateString('pt-BR');
+
+// ─── Tab switch ───────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── LINEAR ───────────────────────────────────────────────────────────────────
+function calcLinear() {
+  const bem    = val('lin-bem');
+  const prazo  = val('lin-prazo');
+  const cotas  = val('lin-cotas') || 1;
+  const adm    = val('lin-adm');
+  const fr     = val('lin-fr');
+  const lance  = val('lin-lance');
+
+  const percMensal     = prazo > 0 ? (adm + fr) / prazo : 0;
+  const valorTotal     = bem * cotas;
+  const parcela        = prazo > 0 ? valorTotal / prazo : 0;
+  const vlBemTaxas     = valorTotal * (1 + percMensal / 100);
+  const vlTotalLance   = valorTotal * (lance / 100);
+  const vlLanceEmb     = valorTotal * 0.003;
+  const vlLanceRec     = vlTotalLance - vlLanceEmb;
+  const creditoLiq     = valorTotal - vlLanceEmb;
+  const parcelaPosLance = prazo > 1 ? (vlBemTaxas - parcela - vlTotalLance) / (prazo - 1) : 0;
+
+  set('lin-mensal',      fmtPct(percMensal));
+  set('lin-valor-total', fmt(valorTotal));
+  set('lin-parcela',     fmt(parcela));
+  set('lin-bem-taxas',   fmt(vlBemTaxas));
+  set('lin-total-lance', fmt(vlTotalLance));
+  set('lin-lance-emb',   fmt(vlLanceEmb));
+  set('lin-lance-rec',   fmt(vlLanceRec));
+  set('lin-credito',     fmt(creditoLiq));
+  set('lin-parcela-pos', fmt(parcelaPosLance));
+
+  set('res-lin-carta',    fmt(valorTotal));
+  set('res-lin-parcela',  fmt(parcela));
+  set('res-lin-posLance', fmt(parcelaPosLance));
+  set('res-lin-prazo',    prazo ? prazo + ' meses' : '—');
+  set('res-lin-rec',      fmt(vlLanceRec));
+  set('res-lin-credito',  fmt(creditoLiq));
+}
+
+// ─── REDUZIDA 70/30 ───────────────────────────────────────────────────────────
+const r70defaults = [
+  { venc: '', grupo: '', prazo: 180, valorBem: 300000, percLance: 40 },
+  { venc: '', grupo: '', prazo: 160, valorBem: 300000, percLance: 40 },
+  { venc: '', grupo: '', prazo: 200, valorBem: 300000, percLance: 40 },
+];
+
+function buildR70() {
+  const wrap = document.getElementById('r70-cotas-wrap');
+  wrap.innerHTML = '';
+  r70defaults.forEach((d, i) => {
+    wrap.innerHTML += `
+    <div class="cota-card">
+      <div class="cota-header">
+        <div class="cota-badge">${i+1}</div>
+        <div class="cota-title">Cota ${i+1}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div class="field">
+          <label>Vencimento</label>
+          <div class="input-wrap"><input type="number" id="r70-${i}-venc" value="${d.venc}" oninput="calcR70()" /><span class="input-icon-right">✏️</span></div>
+        </div>
+        <div class="field">
+          <label>Grupo</label>
+          <div class="input-wrap"><input type="number" id="r70-${i}-grupo" value="${d.grupo}" oninput="calcR70()" /><span class="input-icon-right">✏️</span></div>
+        </div>
+        <div class="field">
+          <label>Prazo <span class="hint">meses</span></label>
+          <div class="input-wrap"><input type="number" id="r70-${i}-prazo" value="${d.prazo}" oninput="calcR70()" /><span class="input-icon-right">✏️</span></div>
+        </div>
+        <div class="field">
+          <label>Valor do Bem</label>
+          <div class="input-wrap"><span class="input-prefix">R$</span><input type="number" id="r70-${i}-bem" class="has-prefix" value="${d.valorBem}" oninput="calcR70()" /><span class="input-icon-right">✏️</span></div>
+        </div>
+        <div class="field">
+          <label>% Lance</label>
+          <div class="input-wrap"><span class="input-prefix">%</span><input type="number" id="r70-${i}-lance" class="has-prefix" value="${d.percLance}" oninput="calcR70()" /><span class="input-icon-right">✏️</span></div>
+        </div>
+        <div class="field"><label><span class="lock">🔒</span> % Mensal</label><div class="calc-field" id="r70-${i}-mensal">—</div></div>
+        <div class="field"><label><span class="lock">🔒</span> Total Lance</label><div class="calc-field" id="r70-${i}-totalLance">—</div></div>
+        <div class="field"><label><span class="lock">🔒</span> Lance Embutido</label><div class="calc-field" id="r70-${i}-lanceEmb">—</div></div>
+        <div class="field"><label><span class="lock">🔒</span> Recursos Próprios</label><div class="calc-field highlight" id="r70-${i}-lanceRec">—</div></div>
+        <div class="field"><label><span class="lock">🔒</span> Crédito Líquido</label><div class="calc-field" id="r70-${i}-credito">—</div></div>
+        <div class="field"><label><span class="lock">🔒</span> Entrada (30%)</label><div class="calc-field" id="r70-${i}-entrada">—</div></div>
+        <div class="field"><label><span class="lock">🔒</span> Saldo (70%)</label><div class="calc-field" id="r70-${i}-saldo">—</div></div>
+      </div>
+    </div>`;
+  });
+  calcR70();
+}
+
+function calcR70() {
+  const adm = val('r70-adm');
+  const fr  = val('r70-fr');
+  let totalValor = 0, totalLance = 0, totalRec = 0, prazoSum = 0, cotasCount = 0;
+
+  for (let i = 0; i < 3; i++) {
+    const bem   = val(`r70-${i}-bem`);
+    const prazo = val(`r70-${i}-prazo`);
+    const lp    = val(`r70-${i}-lance`);
+
+    const percMensal   = prazo > 0 ? (adm + fr) / prazo : 0;
+    const valorTotal   = bem;
+    const vlBemTaxas   = valorTotal * (1 + percMensal / 100);
+    const vlTotalLance = valorTotal * (lp / 100);
+    const vlLanceEmb   = valorTotal * 0.003;
+    const vlLanceRec   = vlTotalLance - vlLanceEmb;
+    const creditoLiq   = valorTotal - vlLanceEmb;
+    const entrada      = vlBemTaxas * 0.30;
+    const saldo        = vlBemTaxas * 0.70;
+
+    set(`r70-${i}-mensal`,     fmtPct(percMensal));
+    set(`r70-${i}-totalLance`, fmt(vlTotalLance));
+    set(`r70-${i}-lanceEmb`,   fmt(vlLanceEmb));
+    set(`r70-${i}-lanceRec`,   fmt(vlLanceRec));
+    set(`r70-${i}-credito`,    fmt(creditoLiq));
+    set(`r70-${i}-entrada`,    fmt(entrada));
+    set(`r70-${i}-saldo`,      fmt(saldo));
+
+    if (bem > 0 && prazo > 0) {
+      totalValor += valorTotal;
+      totalLance += vlTotalLance;
+      totalRec   += vlLanceRec;
+      prazoSum   += prazo;
+      cotasCount++;
+    }
+  }
+
+  const prazoMedio = cotasCount > 0 ? (prazoSum / cotasCount).toFixed(0) : 0;
+  set('r70-res-carta',  fmt(totalValor));
+  set('r70-res-lance',  fmt(totalLance));
+  set('r70-res-prazo',  prazoMedio ? prazoMedio + ' meses' : '—');
+  set('r70-res-rec',    fmt(totalRec));
+}
+
+// ─── REDUZIDA 50/50 ───────────────────────────────────────────────────────────
+function calcR50() {
+  const bem   = val('r50-bem');
+  const prazo = val('r50-prazo');
+  const cotas = val('r50-cotas') || 1;
+  const adm   = val('r50-adm');
+  const fr    = val('r50-fr');
+  const lance = val('r50-lance');
+
+  const percMensal    = prazo > 0 ? (adm + fr) / prazo : 0;
+  const valorTotal    = bem * cotas;
+  const parcelaBase   = prazo > 0 ? valorTotal / prazo : 0;
+  const parcelaMeia   = parcelaBase / 2;
+  const vlBemTaxas    = valorTotal * (1 + percMensal / 100);
+  const vlTotalLance  = valorTotal * (lance / 100);
+  const vlLanceEmb    = valorTotal * 0.003;
+  const vlLanceRec    = vlTotalLance - vlLanceEmb;
+  const creditoLiq    = valorTotal - vlLanceEmb;
+  const saldoFin      = vlBemTaxas / 2;
+  const parcelaPosL   = prazo > 1 ? (vlBemTaxas - parcelaMeia - vlTotalLance) / (prazo - 1) : 0;
+
+  set('r50-mensal',      fmtPct(percMensal));
+  set('r50-valor-total', fmt(valorTotal));
+  set('r50-parcela',     fmt(parcelaBase));
+  set('r50-parcela-meia',fmt(parcelaMeia));
+  set('r50-total-lance', fmt(vlTotalLance));
+  set('r50-lance-emb',   fmt(vlLanceEmb));
+  set('r50-lance-rec',   fmt(vlLanceRec));
+  set('r50-credito',     fmt(creditoLiq));
+  set('r50-saldo',       fmt(saldoFin));
+  set('r50-parcela-pos', fmt(parcelaPosL));
+
+  set('r50-res-carta',    fmt(valorTotal));
+  set('r50-res-entrada',  fmt(parcelaMeia));
+  set('r50-res-saldo',    fmt(saldoFin));
+  set('r50-res-posLance', fmt(parcelaPosL));
+  set('r50-res-prazo',    prazo ? prazo + ' meses' : '—');
+  set('r50-res-credito',  fmt(creditoLiq));
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const d = today();
+  document.querySelectorAll('[id$="-data"]').forEach(el => el.textContent = '🔒 ' + d);
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+  buildR70();
+  calcLinear();
+  calcR50();
+});
+</script>
+</body>
+</html>
