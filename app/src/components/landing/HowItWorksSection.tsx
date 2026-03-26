@@ -1,57 +1,48 @@
 import { motion } from 'framer-motion'
-import { blurFadeUp, staggerContainer } from '@/lib/animations'
+import { blurFadeUp } from '@/lib/animations'
+import { ZoomParallax } from '@/components/ui/zoom-parallax'
 import { MousePointerClick, PenLine, Send } from 'lucide-react'
 
 const steps = [
-  { icon: MousePointerClick, title: 'Escolha a administradora', desc: 'Selecione e as taxas são preenchidas automaticamente.', num: '1' },
-  { icon: PenLine, title: 'Preencha 4 campos', desc: 'Valor, prazo, cotas e lance. O resto calcula sozinho.', num: '2' },
-  { icon: Send, title: 'Envie a proposta', desc: 'Gere PDF ou compartilhe pelo WhatsApp em 1 toque.', num: '3' },
+  { icon: MousePointerClick, title: 'Escolha a administradora', desc: 'Selecione e as taxas são preenchidas automaticamente.' },
+  { icon: PenLine, title: 'Preencha 4 campos', desc: 'Valor, prazo, cotas e lance. O resto calcula sozinho.' },
+  { icon: Send, title: 'Envie a proposta', desc: 'Gere PDF ou compartilhe pelo WhatsApp em 1 toque.' },
 ]
 
-export default function HowItWorksSection() {
+function StepCard({ icon: Icon, title, desc }: typeof steps[0]) {
   return (
-    <section className="relative py-20 overflow-hidden">
-      {/* Blob */}
-      <div className="gradient-blob gradient-blob-lime w-[400px] h-[400px] -left-48 bottom-0 opacity-20 animate-float" />
-      <div className="mx-auto max-w-5xl px-6 relative z-10">
-        <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">Como funciona</h2>
-          <p className="mt-3 text-lg text-gray-500">Três passos. Sem complicação.</p>
-        </motion.div>
-
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          className="grid gap-6 sm:grid-cols-3"
-          style={{ perspective: '1200px' }}
-        >
-          {steps.map(({ icon: Icon, title, desc, num }, i) => (
-            <motion.div
-              key={title}
-              variants={blurFadeUp}
-              transition={{ delay: i * 0.15 }}
-              className="shimmer-border group"
-            >
-              <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-white/60 backdrop-blur-[32px] p-8 shadow-elevation-2 transition-all duration-500 group-hover:[transform:translateY(-8px)_rotateX(2deg)] group-hover:shadow-elevation-3">
-                <span className="absolute -right-3 -top-3 text-7xl font-black text-[#0D1B4B]/[0.03]">{num}</span>
-                <div className="relative z-10">
-                  <motion.div
-                    className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0D1B4B] to-[#152260]"
-                    animate={{ scale: [1, 1.06, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                  >
-                    <Icon size={24} className="text-[#CCEE00]" />
-                  </motion.div>
-                  <h3 className="text-base font-bold text-[#0D1B4B]">{title}</h3>
-                  <p className="mt-2 text-sm text-gray-500 leading-relaxed">{desc}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+    <div className="glass-premium-card p-8 w-full h-full flex flex-col justify-center">
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0D1B4B] to-[#152260]">
+        <Icon size={24} className="text-[#CCEE00]" />
       </div>
+      <h3 className="text-lg font-bold text-[#0D1B4B]">{title}</h3>
+      <p className="mt-2 text-sm text-gray-500 leading-relaxed">{desc}</p>
+    </div>
+  )
+}
+
+export default function HowItWorksSection() {
+  const parallaxItems = [
+    // Item central (principal)
+    { content: <StepCard {...steps[0]} /> },
+    // Items orbitando ao redor
+    { content: <StepCard {...steps[1]} /> },
+    { content: <StepCard {...steps[2]} /> },
+    // Decorativos: logos de administradoras nos slots restantes
+    { content: <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#0D1B4B] text-2xl font-bold text-[#CCEE00] shadow-elevation-2">I</div> },
+    { content: <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#0D1B4B] text-2xl font-bold text-[#CCEE00] shadow-elevation-2">BB</div> },
+    { content: <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#0D1B4B] text-2xl font-bold text-[#CCEE00] shadow-elevation-2">S</div> },
+    { content: <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#0D1B4B] text-2xl font-bold text-[#CCEE00] shadow-elevation-2">M</div> },
+  ]
+
+  return (
+    <section className="relative overflow-hidden">
+      <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center pt-20 pb-8 relative z-10">
+        <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">Como funciona</h2>
+        <p className="mt-3 text-lg text-gray-500">Três passos. Sem complicação.</p>
+      </motion.div>
+
+      <ZoomParallax items={parallaxItems} />
     </section>
   )
 }
