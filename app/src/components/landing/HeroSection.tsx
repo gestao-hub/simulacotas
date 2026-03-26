@@ -41,18 +41,18 @@ export default function HeroSection() {
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <LiquidButton
                 onClick={() => navigate('/login')}
-                size="lg"
-                className="text-[#0D1B4B] font-bold text-base"
+                size="xl"
+                className="text-[#0D1B4B] font-bold text-base px-10"
               >
                 Testar Grátis 7 Dias
               </LiquidButton>
               <LiquidButton
                 variant="outline"
-                size="lg"
-                className="text-[#0D1B4B] font-semibold text-base"
+                size="xl"
+                className="text-[#0D1B4B] font-semibold text-base px-10"
                 onClick={() => document.getElementById('simulador')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Ver Como Funciona <ChevronDown size={16} />
+                <span className="flex items-center gap-2">Ver Como Funciona <ChevronDown size={16} /></span>
               </LiquidButton>
             </div>
 
