@@ -1,0 +1,19 @@
+{
+  "name": "SimulaCotas",
+  "short_name": "SimulaCotas",
+  "description": "Simulador de consórcio para corretores. Propostas profissionais em 30 segundos.",
+  "start_url": "/app",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D1B4B",
+  "theme_color": "#0D1B4B",
+  "icons": [
+    {
+      "src": "/assets/icone.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "business", "productivity"]
+}
