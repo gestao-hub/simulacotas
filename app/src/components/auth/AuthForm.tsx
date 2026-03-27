@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { trackEvent } from '@/lib/trackEvent'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Eye, EyeOff } from 'lucide-react'
 
 interface AuthFormProps {
   defaultMode?: 'login' | 'register'
@@ -40,6 +41,18 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
   const [error, setError] = useState('')
   const [isForgotPassword, setIsForgotPassword] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+
+  // Carregar email salvo do localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('sc_remember_email')
+    if (saved) {
+      setEmail(saved)
+      setRememberMe(true)
+    }
+  }, [])
 
   const strength = useMemo(() => getPasswordStrength(password), [password])
   const passwordsMatch = confirmPassword === '' || password === confirmPassword
@@ -74,6 +87,15 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) { setError(error.message); setLoading(false); return }
+    }
+
+    // Salvar ou limpar email no localStorage
+    if (!isRegister) {
+      if (rememberMe) {
+        localStorage.setItem('sc_remember_email', email)
+      } else {
+        localStorage.removeItem('sc_remember_email')
+      }
     }
 
     await trackEvent(isRegister ? 'registro' : 'login', { email })
@@ -162,16 +184,25 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
               <>
                 <div className="space-y-2">
                   <Label htmlFor="auth-password">Senha</Label>
-                  <Input
-                    id="auth-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Mínimo 6 caracteres"
-                    minLength={6}
-                    required
-                    className={inputClassName}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="auth-password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      minLength={6}
+                      required
+                      className={`${inputClassName} pr-10`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-400 transition-colors hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                   {/* Medidor de força — só no cadastro */}
                   {isRegister && password.length > 0 && (
                     <div className="space-y-1 pt-1">
@@ -196,19 +227,41 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
                 {isRegister && (
                   <div className="space-y-2">
                     <Label htmlFor="auth-confirmPassword">Confirmar senha</Label>
-                    <Input
-                      id="auth-confirmPassword"
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repita a senha"
-                      required
-                      className={`${inputClassName} ${confirmPassword && !passwordsMatch ? 'border-red-400 focus:border-red-500 focus:ring-red-200' : ''}`}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="auth-confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repita a senha"
+                        required
+                        className={`${inputClassName} pr-10 ${confirmPassword && !passwordsMatch ? 'border-red-400 focus:border-red-500 focus:ring-red-200' : ''}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-400 transition-colors hover:text-gray-600"
+                      >
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
                     {confirmPassword && !passwordsMatch && (
                       <p className="text-[11px] text-red-500">As senhas não coincidem</p>
                     )}
                   </div>
+                )}
+
+                {/* Lembrar-me — só no login */}
+                {!isRegister && (
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-[var(--color-navy)] focus:ring-[var(--color-navy)]/20"
+                    />
+                    <span className="text-sm text-gray-500">Lembrar meu email</span>
+                  </label>
                 )}
               </>
             )}
