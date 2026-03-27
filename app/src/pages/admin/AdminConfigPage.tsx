@@ -59,7 +59,7 @@ export default function AdminConfigPage() {
     setSettings((prev) => prev.map((p) => p.id === s.id ? { ...p, is_active: !p.is_active } : p))
   }
 
-  const categories = [...new Set(settings.map((s) => s.category))]
+  const categories = [...new Set(settings.map((s) => s.category))].filter((c) => c !== 'whatsapp')
 
   const handleAddKey = async (category: string) => {
     const key = prompt('Nome da chave (ex: MP_ACCESS_TOKEN):')
