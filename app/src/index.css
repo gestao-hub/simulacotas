@@ -51,9 +51,11 @@
   html {
     @apply font-sans;
   }
-  button, a, [role="button"], input[type="submit"], input[type="button"] {
-    cursor: pointer;
-  }
+}
+
+/* Fora do @layer para ter prioridade sobre o Preflight do Tailwind */
+button, a, [role="button"], input[type="submit"], input[type="button"] {
+  cursor: pointer;
 }
 
 @theme inline {
