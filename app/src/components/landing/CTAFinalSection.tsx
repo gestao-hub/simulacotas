@@ -14,7 +14,7 @@ export default function CTAFinalSection() {
         <FloatingShapes accentColor="#CCEE00" secondaryColor="#CCEE00" />
         <div className="relative z-10 mx-auto max-w-xl px-6 text-center">
           <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <img src="/assets/icone.png" alt="SC" className="mx-auto mb-6 h-20 w-20" />
+            <img src="/assets/icone.png" alt="SC" className="mx-auto mb-6 h-24 w-auto" />
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Comece a simular agora</h2>
             <p className="mt-3 text-white/50 text-lg">7 dias grátis. Sem cartão. Cancele quando quiser.</p>
             <Button
