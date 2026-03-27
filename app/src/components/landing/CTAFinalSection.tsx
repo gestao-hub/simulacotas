@@ -16,7 +16,7 @@ export default function CTAFinalSection() {
           <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <img src="/assets/icone.png" alt="SC" className="mx-auto mb-6 h-24 w-auto" />
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Comece a simular agora</h2>
-            <p className="mt-3 text-white/50 text-lg">7 dias grátis. Sem cartão. Cancele quando quiser.</p>
+            <p className="mt-3 text-white/50 text-lg">3 dias grátis. Sem cartão. Cancele quando quiser.</p>
             <Button
               onClick={() => navigate('/login')}
               size="lg"

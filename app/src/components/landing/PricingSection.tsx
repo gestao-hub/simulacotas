@@ -24,7 +24,7 @@ const plans = [
     priceCents: ',90',
     period: '/mês',
     features: featuresAll,
-    buttonText: 'Testar Grátis 7 Dias',
+    buttonText: 'Testar Grátis 3 Dias',
     isPopular: true,
     accent: true,
   },

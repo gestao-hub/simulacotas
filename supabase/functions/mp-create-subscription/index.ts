@@ -121,7 +121,7 @@ serve(async (req) => {
         desconto_aplicado: desconto,
         ciclo,
         cupom_usado: coupon_code ?? null,
-        data_proximo_pagamento: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 dias trial
+        data_proximo_pagamento: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 dias trial
       })
 
       return new Response(JSON.stringify({
@@ -148,7 +148,7 @@ serve(async (req) => {
             transaction_amount: valor,
             currency_id: "BRL",
             free_trial: {
-              frequency: 7,
+              frequency: 3,
               frequency_type: "days",
             },
           },
@@ -174,7 +174,7 @@ serve(async (req) => {
         desconto_aplicado: desconto,
         ciclo,
         cupom_usado: coupon_code ?? null,
-        data_proximo_pagamento: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        data_proximo_pagamento: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       })
 
       return new Response(JSON.stringify({

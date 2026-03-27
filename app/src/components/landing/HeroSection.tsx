@@ -44,7 +44,7 @@ export default function HeroSection() {
                 size="xl"
                 className="text-[#0D1B4B] font-bold text-base px-10"
               >
-                Testar Grátis 7 Dias
+                Testar Grátis 3 Dias
               </LiquidButton>
               <LiquidButton
                 variant="outline"

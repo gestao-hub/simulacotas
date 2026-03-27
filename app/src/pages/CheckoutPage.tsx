@@ -78,11 +78,24 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-3xl space-y-6">
       <div className="text-center">
         <h1 className="text-2xl font-bold text-[var(--color-navy)]">Assine o SimulaCotas Pro</h1>
-        <p className="text-[var(--color-muted)]">
-          {trialDias > 0
-            ? `Seu trial expira em ${trialDias} dia${trialDias > 1 ? 's' : ''}. Assine para não perder acesso.`
-            : 'Tudo ilimitado. Sem surpresas. Cancele quando quiser.'}
-        </p>
+        {trialDias > 0 ? (
+          <p className="text-amber-600 font-medium">
+            Seu trial expira em {trialDias} dia{trialDias > 1 ? 's' : ''}. Assine para não perder acesso.
+          </p>
+        ) : profile?.status === 'trial' ? (
+          <div className="mx-auto max-w-md rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+            <p className="text-sm font-semibold text-red-700">
+              Seu trial expirou. Assine agora para continuar gerando propostas profissionais.
+            </p>
+            {(profile.simulacoes_count > 0 || profile.propostas_count > 0) && (
+              <p className="mt-1 text-xs text-red-500">
+                Você já fez {profile.simulacoes_count} simulações e {profile.propostas_count} propostas — não perca esse progresso!
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="text-[var(--color-muted)]">Tudo ilimitado. Sem surpresas. Cancele quando quiser.</p>
+        )}
       </div>
 
       {/* Planos */}

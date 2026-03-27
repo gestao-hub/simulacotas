@@ -48,7 +48,7 @@ export default function LoginPage() {
           </CardTitle>
           <CardDescription>
             {isRegister
-              ? 'Comece seu trial gratuito de 7 dias'
+              ? 'Comece seu trial gratuito de 3 dias'
               : 'Acesse sua conta SimulaCotas'}
           </CardDescription>
         </CardHeader>

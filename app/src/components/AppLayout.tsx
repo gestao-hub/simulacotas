@@ -1,5 +1,8 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTrialStatus } from '@/hooks/useTrialStatus'
+import TrialBanner from '@/components/trial/TrialBanner'
+import TrialExpiredModal from '@/components/trial/TrialExpiredModal'
 import { Home, PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -21,6 +24,7 @@ const adminLinks = [
 
 export default function AppLayout() {
   const { profile, isAdmin, signOut } = useAuth()
+  const trial = useTrialStatus()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -92,6 +96,17 @@ export default function AppLayout() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-[var(--color-foreground)]">{profile?.full_name ?? 'Corretor'}</p>
               <p className="truncate text-xs text-[var(--color-muted)]">{profile?.email}</p>
+              {trial.isPaidUser && (
+                <span className="mt-1 inline-block rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">Pro</span>
+              )}
+              {trial.isTrialActive && (
+                <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                  Trial · {trial.daysRemaining}d
+                </span>
+              )}
+              {trial.isTrialExpired && (
+                <span className="mt-1 inline-block rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">Expirado</span>
+              )}
             </div>
           </div>
           <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-[var(--color-muted)]" onClick={handleSignOut}>
@@ -116,10 +131,13 @@ export default function AppLayout() {
           </div>
         </header>
 
+        <TrialBanner />
         <div className="p-4 pb-24 lg:p-8 lg:pb-8">
           <Outlet />
         </div>
       </main>
+
+      <TrialExpiredModal />
 
       {/* Bottom nav — mobile */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-[var(--color-border)] bg-white lg:hidden">
