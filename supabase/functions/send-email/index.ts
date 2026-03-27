@@ -69,7 +69,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "SimulaCotas <onboarding@resend.dev>",
+        from: "SimulaCotas <noreply@piperhub.com.br>",
         to: [to],
         subject: finalSubject,
         html: finalHtml,
