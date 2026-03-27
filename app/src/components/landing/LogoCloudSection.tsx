@@ -2,11 +2,11 @@ import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 
 const admins = [
-  { nome: 'Banco do Brasil', logo: '/assets/banco-do-brasil.png' },
-  { nome: 'Itaú', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/200px-Banco_Ita%C3%BA_logo.svg.png' },
-  { nome: 'Santander', logo: '/assets/santander.png' },
-  { nome: 'Breitkopf', logo: '/assets/bkf.png' },
-  { nome: 'Âncora', logo: '/assets/ancora.webp' },
+  { nome: 'Banco do Brasil', logo: '/assets/banco-do-brasil.png', h: 'h-8' },
+  { nome: 'Itaú', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/200px-Banco_Ita%C3%BA_logo.svg.png', h: 'h-8' },
+  { nome: 'Santander', logo: '/assets/santander.png', h: 'h-8' },
+  { nome: 'Breitkopf', logo: '/assets/bkf.png', h: 'h-8' },
+  { nome: 'Âncora', logo: '/assets/ancora.webp', h: 'h-10' },
 ]
 
 export default function LogoCloudSection() {
@@ -21,7 +21,7 @@ export default function LogoCloudSection() {
             <InfiniteSlider duration={30} durationOnHover={60} gap={56}>
               {admins.map((admin) => (
                 <div key={admin.nome} className="flex items-center gap-3 px-2">
-                  <img src={admin.logo} alt={admin.nome} className="h-8 w-auto object-contain" />
+                  <img src={admin.logo} alt={admin.nome} className={`${admin.h} w-auto object-contain`} />
                 </div>
               ))}
             </InfiniteSlider>
