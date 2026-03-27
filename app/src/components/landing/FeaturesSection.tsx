@@ -8,7 +8,7 @@ const features = [
   { icon: FileText, title: 'Proposta em PDF', desc: 'Com seu logo, cores e contato. Profissional e personalizado.', color: '#AACC00' },
   { icon: Share2, title: 'Envie pelo WhatsApp', desc: 'Compartilhe a proposta no WhatsApp do cliente em 1 toque.', color: '#0D1B4B' },
   { icon: Building2, title: '7 administradoras', desc: 'Itaú, BB, Santander, Magalu, Reconomia, Breitkopf e Âncora.', color: '#AACC00' },
-  { icon: BarChart3, title: '3 planos de consórcio', desc: 'Linear, Reduzida 70/30 e Reduzida 50/50 — todos calculados.', color: '#0D1B4B' },
+  { icon: BarChart3, title: '3 modalidades de parcela', desc: 'Linear, Reduzida 70/30 e Reduzida 50/50 — todos calculados.', color: '#0D1B4B' },
   { icon: Smartphone, title: 'Funciona no celular', desc: 'PWA — instale como app no Android ou iPhone. Use em campo.', color: '#AACC00' },
 ]
 

@@ -4,7 +4,7 @@ import { Building2, BarChart3, Zap } from 'lucide-react'
 
 const stats = [
   { icon: Building2, value: '7', label: 'Administradoras', suffix: '+', gradient: 'from-[#CCEE00]/20 to-transparent' },
-  { icon: BarChart3, value: '3', label: 'Planos de consórcio', suffix: '', gradient: 'from-blue-400/20 to-transparent' },
+  { icon: BarChart3, value: '3', label: 'Modalidades de parcela', suffix: '', gradient: 'from-blue-400/20 to-transparent' },
   { icon: Zap, value: '30', label: 'Segundos por simulação', suffix: 's', gradient: 'from-purple-400/20 to-transparent' },
 ]
 
