@@ -36,12 +36,11 @@ export default function AppLayout() {
       {/* Sidebar — desktop, fixed */}
       <aside className="hidden w-64 shrink-0 lg:block">
         <div className="fixed top-0 left-0 flex h-screen w-64 flex-col border-r border-gray-100 bg-[#FAFAFA]">
-          <div className="px-5 py-5">
-            <img src="/assets/logo.png" alt="SimulaCotas" className="h-9" />
+          <div className="flex justify-center px-5 py-6">
+            <img src="/assets/logo.png" alt="SimulaCotas" className="h-12" />
           </div>
 
-          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
-            <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Menu</p>
+          <nav className="flex-1 space-y-4 overflow-y-auto px-3 py-2">
             <div className="space-y-1 rounded-2xl bg-white p-2 shadow-sm">
               {corretorLinks.map(({ to, icon: Icon, label }) => (
                 <NavLink
@@ -64,7 +63,6 @@ export default function AppLayout() {
 
             {isAdmin && (
               <>
-                <p className="mt-5 mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Admin</p>
                 <div className="space-y-1 rounded-2xl bg-white p-2 shadow-sm">
                   {adminLinks.map(({ to, icon: Icon, label }) => (
                     <NavLink
