@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { trackEvent } from '@/lib/trackEvent'
@@ -13,10 +13,26 @@ interface AuthFormProps {
 
 const inputClassName = 'border-gray-300 bg-white/60 focus:border-[var(--color-navy)] focus:ring-[var(--color-navy)]/20'
 
+function getPasswordStrength(pw: string) {
+  let score = 0
+  if (pw.length >= 6) score++
+  if (pw.length >= 8) score++
+  if (/[A-Z]/.test(pw)) score++
+  if (/[0-9]/.test(pw)) score++
+  if (/[^A-Za-z0-9]/.test(pw)) score++
+
+  if (score <= 1) return { level: 1, label: 'Fraca', color: 'bg-red-500' }
+  if (score <= 2) return { level: 2, label: 'Razoável', color: 'bg-orange-400' }
+  if (score <= 3) return { level: 3, label: 'Boa', color: 'bg-yellow-400' }
+  if (score <= 4) return { level: 4, label: 'Forte', color: 'bg-lime-500' }
+  return { level: 5, label: 'Excelente', color: 'bg-green-500' }
+}
+
 export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormProps) {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [isRegister, setIsRegister] = useState(defaultMode === 'register')
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
@@ -24,6 +40,9 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
   const [error, setError] = useState('')
   const [isForgotPassword, setIsForgotPassword] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+
+  const strength = useMemo(() => getPasswordStrength(password), [password])
+  const passwordsMatch = confirmPassword === '' || password === confirmPassword
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,6 +60,11 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
     }
 
     if (isRegister) {
+      if (password !== confirmPassword) {
+        setError('As senhas não coincidem')
+        setLoading(false)
+        return
+      }
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -135,19 +159,58 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
               />
             </div>
             {!isForgotPassword && (
-              <div className="space-y-2">
-                <Label htmlFor="auth-password">Senha</Label>
-                <Input
-                  id="auth-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
-                  minLength={6}
-                  required
-                  className={inputClassName}
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="auth-password">Senha</Label>
+                  <Input
+                    id="auth-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Mínimo 6 caracteres"
+                    minLength={6}
+                    required
+                    className={inputClassName}
+                  />
+                  {/* Medidor de força — só no cadastro */}
+                  {isRegister && password.length > 0 && (
+                    <div className="space-y-1 pt-1">
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div
+                            key={i}
+                            className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                              i <= strength.level ? strength.color : 'bg-gray-200'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-gray-400">
+                        Força: <span className="font-medium">{strength.label}</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Confirmação de senha — só no cadastro */}
+                {isRegister && (
+                  <div className="space-y-2">
+                    <Label htmlFor="auth-confirmPassword">Confirmar senha</Label>
+                    <Input
+                      id="auth-confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Repita a senha"
+                      required
+                      className={`${inputClassName} ${confirmPassword && !passwordsMatch ? 'border-red-400 focus:border-red-500 focus:ring-red-200' : ''}`}
+                    />
+                    {confirmPassword && !passwordsMatch && (
+                      <p className="text-[11px] text-red-500">As senhas não coincidem</p>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             {error && (
@@ -157,7 +220,7 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
             <Button
               type="submit"
               className="w-full bg-[var(--color-navy)] text-white transition-all duration-200 hover:bg-[var(--color-navy-light)] hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-              disabled={loading}
+              disabled={loading || (isRegister && !passwordsMatch)}
             >
               {loading ? 'Aguarde...' : isForgotPassword ? 'Enviar link' : isRegister ? 'Criar conta grátis' : 'Entrar'}
             </Button>
