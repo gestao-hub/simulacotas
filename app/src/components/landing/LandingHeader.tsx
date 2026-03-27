@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
 import { LiquidButton } from '@/components/ui/liquid-glass-button'
@@ -12,7 +12,7 @@ const navLinks = [
 ]
 
 export default function LandingHeader() {
-  const navigate = useNavigate()
+  const [, setSearchParams] = useSearchParams()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
@@ -77,13 +77,13 @@ export default function LandingHeader() {
               </ul>
             </div>
             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-              <LiquidButton size="sm" onClick={() => navigate('/login')} className={cn('text-[#0D1B4B] font-semibold', scrolled && 'lg:hidden')}>
+              <LiquidButton size="sm" onClick={() => setSearchParams({ auth: 'login' })} className={cn('text-[#0D1B4B] font-semibold', scrolled && 'lg:hidden')}>
                 Entrar
               </LiquidButton>
-              <LiquidButton size="sm" onClick={() => navigate('/login')} className={cn('text-[#0D1B4B] font-bold', scrolled && 'lg:hidden')}>
+              <LiquidButton size="sm" onClick={() => setSearchParams({ auth: 'register' })} className={cn('text-[#0D1B4B] font-bold', scrolled && 'lg:hidden')}>
                 Testar Grátis
               </LiquidButton>
-              <LiquidButton size="sm" onClick={() => navigate('/login')} className={cn('text-[#0D1B4B] font-bold', scrolled ? 'lg:inline-flex' : 'hidden')}>
+              <LiquidButton size="sm" onClick={() => setSearchParams({ auth: 'register' })} className={cn('text-[#0D1B4B] font-bold', scrolled ? 'lg:inline-flex' : 'hidden')}>
                 Começar
               </LiquidButton>
             </div>

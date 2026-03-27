@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { blurFadeUp, staggerContainer } from '@/lib/animations'
 import { RippleButton } from '@/components/ui/ripple-button'
@@ -47,7 +47,7 @@ const plans = [
 ]
 
 export default function PricingSection() {
-  const navigate = useNavigate()
+  const [, setSearchParams] = useSearchParams()
 
   return (
     <section id="pricing" className="relative py-20 overflow-hidden">
@@ -120,7 +120,7 @@ export default function PricingSection() {
               </ul>
 
               <RippleButton
-                onClick={() => navigate('/login')}
+                onClick={() => setSearchParams({ auth: 'register' })}
                 rippleColor={plan.accent ? 'rgba(13,27,75,0.3)' : 'rgba(204,238,0,0.4)'}
                 className={`mt-auto w-full py-3.5 rounded-xl font-semibold text-sm transition-all ${
                   plan.accent

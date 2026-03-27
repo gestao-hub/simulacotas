@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { blurFadeUp } from '@/lib/animations'
 import FloatingShapes from '@/components/ui/floating-shapes'
 import { Button } from '@/components/ui/button'
 
 export default function CTAFinalSection() {
-  const navigate = useNavigate()
+  const [, setSearchParams] = useSearchParams()
 
   return (
     <section className="relative overflow-hidden">
@@ -18,7 +18,7 @@ export default function CTAFinalSection() {
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Comece a simular agora</h2>
             <p className="mt-3 text-white/50 text-lg">3 dias grátis. Sem cartão. Cancele quando quiser.</p>
             <Button
-              onClick={() => navigate('/login')}
+              onClick={() => setSearchParams({ auth: 'register' })}
               size="lg"
               className="mt-8 bg-[#CCEE00] px-10 text-base font-bold text-[#0D1B4B] hover:bg-[#AACC00] shadow-lg glow-lime py-6"
             >

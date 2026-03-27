@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { AnimatedGroup } from '@/components/ui/animated-group'
 import FloatingShapes from '@/components/ui/floating-shapes'
 import { LiquidButton } from '@/components/ui/liquid-glass-button'
@@ -12,7 +12,7 @@ const transitionVariants = {
 }
 
 export default function HeroSection() {
-  const navigate = useNavigate()
+  const [, setSearchParams] = useSearchParams()
 
   return (
     <section className="relative overflow-hidden">
@@ -40,7 +40,7 @@ export default function HeroSection() {
 
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <LiquidButton
-                onClick={() => navigate('/login')}
+                onClick={() => setSearchParams({ auth: 'register' })}
                 size="xl"
                 className="text-[#0D1B4B] font-bold text-base px-10"
               >

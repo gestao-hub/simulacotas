@@ -12,6 +12,7 @@ import PricingSection from '@/components/landing/PricingSection'
 import FAQSection from '@/components/landing/FAQSection'
 import CTAFinalSection from '@/components/landing/CTAFinalSection'
 import LandingFooter from '@/components/landing/LandingFooter'
+import AuthModal from '@/components/auth/AuthModal'
 
 export default function LandingPage() {
   return (
@@ -30,6 +31,7 @@ export default function LandingPage() {
       <FAQSection />
       <CTAFinalSection />
       <LandingFooter />
+      <AuthModal />
     </div>
   )
 }

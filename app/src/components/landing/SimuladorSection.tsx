@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { calcularLinear, formatBRL } from '@/hooks/useSimulador'
 import { blurFadeUp } from '@/lib/animations'
@@ -15,7 +15,7 @@ const adminsDemo = [
 ]
 
 export default function SimuladorSection() {
-  const navigate = useNavigate()
+  const [, setSearchParams] = useSearchParams()
   const [selectedAdmin, setSelectedAdmin] = useState(0)
   const [valorBem, setValorBem] = useState(400000)
   const [prazo, setPrazo] = useState(200)
@@ -111,7 +111,7 @@ export default function SimuladorSection() {
 
                 <div className="mt-5 rounded-xl bg-white/10 backdrop-blur-sm p-4 text-center border border-white/10">
                   <p className="text-sm font-semibold text-white/70">Quer gerar PDF e enviar pelo WhatsApp?</p>
-                  <Button onClick={() => navigate('/login')} className="mt-3 bg-[#CCEE00] font-bold text-[#0D1B4B] hover:bg-[#AACC00] shadow-lg glow-lime-sm">
+                  <Button onClick={() => setSearchParams({ auth: 'register' })} className="mt-3 bg-[#CCEE00] font-bold text-[#0D1B4B] hover:bg-[#AACC00] shadow-lg glow-lime-sm">
                     Criar Conta Grátis
                   </Button>
                 </div>
