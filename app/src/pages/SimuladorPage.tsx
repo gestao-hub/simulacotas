@@ -6,7 +6,8 @@ import ResultadoCard from '@/components/simulador/ResultadoCard'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { salvarSimulacao, salvarProposta } from '@/lib/salvarSimulacao'
-import { gerarHTMLProposta, abrirPDFNovaAba } from '@/lib/gerarPDF'
+import { gerarHTMLProposta } from '@/lib/gerarPDF'
+import PropostaPreview from '@/components/simulador/PropostaPreview'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
@@ -23,6 +24,8 @@ export default function SimuladorPage() {
   const [administradoras, setAdministradoras] = useState<Administradora[]>([])
   const [selectedAdmin, setSelectedAdmin] = useState<Administradora | null>(null)
   const [salvando, setSalvando] = useState(false)
+  const [previewHtml, setPreviewHtml] = useState('')
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   useEffect(() => {
     supabase
@@ -75,14 +78,6 @@ export default function SimuladorPage() {
   const handleGerarPDF = () => {
     if (!sim.resumo || !selectedAdmin) return
 
-    // Abrir janela SINCRONAMENTE (antes de qualquer async) para evitar bloqueio de pop-up
-    const win = window.open('', '_blank')
-    if (!win) {
-      alert('Permita pop-ups para gerar o PDF')
-      return
-    }
-
-    // Gerar HTML e exibir na janela já aberta
     const html = gerarHTMLProposta({
       corretorNome: profile?.full_name ?? '',
       corretorWhatsapp: profile?.whatsapp ?? '',
@@ -95,9 +90,11 @@ export default function SimuladorPage() {
       categoria: sim.categoria,
       resumo: sim.resumo,
     })
-    abrirPDFNovaAba(html, win)
 
-    // Salvar no banco em background (fire-and-forget)
+    setPreviewHtml(html)
+    setPreviewOpen(true)
+
+    // Salvar no banco em background
     salvarEGerar('pdf')
   }
 
@@ -281,6 +278,13 @@ export default function SimuladorPage() {
         onGerarPDF={handleGerarPDF}
         onCompartilharWhatsApp={handleWhatsApp}
         salvando={salvando}
+      />
+
+      <PropostaPreview
+        html={previewHtml}
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        onWhatsApp={handleWhatsApp}
       />
     </div>
   )
