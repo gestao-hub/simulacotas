@@ -16,7 +16,7 @@ const logoMap: Record<string, string> = {
   'Âncora': '/assets/ancora.webp',
 }
 
-const hiddenAdmins = ['Reconomia']
+const hiddenAdmins = ['Reconomia', 'Magalu']
 
 export default function AdminSelectorChips({ administradoras, selectedId, onSelect }: Props) {
   return (
