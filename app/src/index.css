@@ -51,6 +51,9 @@
   html {
     @apply font-sans;
   }
+  button, a, [role="button"], input[type="submit"], input[type="button"] {
+    cursor: pointer;
+  }
 }
 
 @theme inline {
