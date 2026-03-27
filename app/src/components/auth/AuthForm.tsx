@@ -41,6 +41,7 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
   const [error, setError] = useState('')
   const [isForgotPassword, setIsForgotPassword] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [confirmationSent, setConfirmationSent] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
@@ -82,12 +83,20 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
         setLoading(false)
         return
       }
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { full_name: fullName, phone } },
       })
       if (error) { setError(error.message); setLoading(false); return }
+
+      // Se não retornou sessão, precisa confirmar email
+      if (!data.session) {
+        await trackEvent('registro', { email })
+        setConfirmationSent(true)
+        setLoading(false)
+        return
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) { setError(error.message); setLoading(false); return }
@@ -128,7 +137,24 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
         </p>
       </div>
 
-      {resetSent ? (
+      {confirmationSent ? (
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+            <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          </div>
+          <p className="text-sm font-semibold text-gray-900">Conta criada com sucesso!</p>
+          <p className="text-sm text-gray-600">
+            Enviamos um link de confirmação para <strong>{email}</strong>. Abra seu email e clique no link para ativar sua conta.
+          </p>
+          <p className="text-xs text-gray-400">Não recebeu? Verifique a pasta de spam.</p>
+          <button
+            onClick={() => { setConfirmationSent(false); setIsRegister(false); setError('') }}
+            className="text-sm font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]"
+          >
+            Ir para o login
+          </button>
+        </div>
+      ) : resetSent ? (
         <div className="space-y-4 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
