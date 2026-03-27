@@ -80,7 +80,7 @@ export default function LandingHeader() {
               <LiquidButton size="sm" onClick={() => setSearchParams({ auth: 'login' })} className={cn('text-[#0D1B4B] font-semibold', scrolled && 'lg:hidden')}>
                 Entrar
               </LiquidButton>
-              <LiquidButton size="sm" onClick={() => setSearchParams({ auth: 'register' })} className={cn('text-[#0D1B4B] font-bold', scrolled && 'lg:hidden')}>
+              <LiquidButton size="sm" onClick={() => setSearchParams({ auth: 'register' })} className={cn('text-[#0D1B4B] font-bold hidden lg:inline-flex', scrolled && 'lg:hidden')}>
                 Testar Grátis
               </LiquidButton>
               <LiquidButton size="sm" onClick={() => setSearchParams({ auth: 'register' })} className={cn('text-[#0D1B4B] font-bold', scrolled ? 'lg:inline-flex' : 'hidden')}>
