@@ -22,11 +22,23 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isForgotPassword, setIsForgotPassword] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+
+    if (isForgotPassword) {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/app/config`,
+      })
+      if (error) { setError(error.message); setLoading(false); return }
+      setResetSent(true)
+      setLoading(false)
+      return
+    }
 
     if (isRegister) {
       const { error } = await supabase.auth.signUp({
@@ -55,96 +67,133 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
       <div className="mb-6 text-center">
         <img src="/assets/logo.png" alt="SimulaCotas" className="mx-auto mb-4 h-14" />
         <h2 className="text-xl font-bold text-[var(--color-navy)]">
-          {isRegister ? 'Criar conta' : 'Entrar'}
+          {isForgotPassword ? 'Recuperar senha' : isRegister ? 'Criar conta' : 'Entrar'}
         </h2>
         <p className="mt-1 text-sm text-gray-500">
-          {isRegister
-            ? 'Comece seu trial gratuito de 3 dias'
-            : 'Acesse sua conta SimulaCotas'}
+          {isForgotPassword
+            ? 'Digite seu email para receber o link de redefinição'
+            : isRegister
+              ? 'Comece seu trial gratuito de 3 dias'
+              : 'Acesse sua conta SimulaCotas'}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {isRegister && (
-          <>
+      {resetSent ? (
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+            <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <p className="text-sm text-gray-600">
+            Enviamos um link de redefinição para <strong>{email}</strong>. Verifique sua caixa de entrada.
+          </p>
+          <button
+            onClick={() => { setIsForgotPassword(false); setResetSent(false); setError('') }}
+            className="text-sm font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]"
+          >
+            Voltar ao login
+          </button>
+        </div>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {isRegister && !isForgotPassword && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="auth-fullName">Nome completo</Label>
+                  <Input
+                    id="auth-fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Seu nome"
+                    required
+                    className={inputClassName}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="auth-phone">WhatsApp</Label>
+                  <Input
+                    id="auth-phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="(11) 99999-9999"
+                    className={inputClassName}
+                  />
+                </div>
+              </>
+            )}
             <div className="space-y-2">
-              <Label htmlFor="auth-fullName">Nome completo</Label>
+              <Label htmlFor="auth-email">Email</Label>
               <Input
-                id="auth-fullName"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Seu nome"
+                id="auth-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
                 required
                 className={inputClassName}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="auth-phone">WhatsApp</Label>
-              <Input
-                id="auth-phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="(11) 99999-9999"
-                className={inputClassName}
-              />
-            </div>
-          </>
-        )}
-        <div className="space-y-2">
-          <Label htmlFor="auth-email">Email</Label>
-          <Input
-            id="auth-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="seu@email.com"
-            required
-            className={inputClassName}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="auth-password">Senha</Label>
-          <Input
-            id="auth-password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Mínimo 6 caracteres"
-            minLength={6}
-            required
-            className={inputClassName}
-          />
-        </div>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="auth-password">Senha</Label>
+                <Input
+                  id="auth-password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Mínimo 6 caracteres"
+                  minLength={6}
+                  required
+                  className={inputClassName}
+                />
+              </div>
+            )}
 
-        {error && (
-          <p className="text-sm text-red-500">{error}</p>
-        )}
+            {error && (
+              <p className="text-sm text-red-500">{error}</p>
+            )}
 
-        <Button
-          type="submit"
-          className="w-full bg-[var(--color-navy)] text-white transition-all duration-200 hover:bg-[var(--color-navy-light)] hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-          disabled={loading}
-        >
-          {loading ? 'Aguarde...' : isRegister ? 'Criar conta grátis' : 'Entrar'}
-        </Button>
-      </form>
+            <Button
+              type="submit"
+              className="w-full bg-[var(--color-navy)] text-white transition-all duration-200 hover:bg-[var(--color-navy-light)] hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+              disabled={loading}
+            >
+              {loading ? 'Aguarde...' : isForgotPassword ? 'Enviar link' : isRegister ? 'Criar conta grátis' : 'Entrar'}
+            </Button>
+          </form>
 
-      <div className="mt-4 text-center text-sm">
-        {isRegister ? (
-          <p>Já tem conta?{' '}
-            <button onClick={() => setIsRegister(false)} className="font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]">
-              Entrar
-            </button>
-          </p>
-        ) : (
-          <p>Não tem conta?{' '}
-            <button onClick={() => setIsRegister(true)} className="font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]">
-              Criar conta grátis
-            </button>
-          </p>
-        )}
-      </div>
+          <div className="mt-4 space-y-2 text-center text-sm">
+            {isForgotPassword ? (
+              <button
+                onClick={() => { setIsForgotPassword(false); setError('') }}
+                className="font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]"
+              >
+                Voltar ao login
+              </button>
+            ) : isRegister ? (
+              <p>Já tem conta?{' '}
+                <button onClick={() => setIsRegister(false)} className="font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]">
+                  Entrar
+                </button>
+              </p>
+            ) : (
+              <>
+                <p>Não tem conta?{' '}
+                  <button onClick={() => setIsRegister(true)} className="font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]">
+                    Criar conta grátis
+                  </button>
+                </p>
+                <p>
+                  <button onClick={() => { setIsForgotPassword(true); setError('') }} className="text-gray-400 transition-colors hover:text-[var(--color-navy)]">
+                    Esqueceu a senha?
+                  </button>
+                </p>
+              </>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }
