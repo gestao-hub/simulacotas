@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useTrialStatus } from '@/hooks/useTrialStatus'
 import TrialBanner from '@/components/trial/TrialBanner'
 import TrialExpiredModal from '@/components/trial/TrialExpiredModal'
-import { Home, PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut } from 'lucide-react'
+import { Home, PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut, MessageSquare } from 'lucide-react'
 
 const corretorLinks = [
   { to: '/app', icon: Home, label: 'Início' },
@@ -19,6 +19,7 @@ const adminLinks = [
   { to: '/app/admin/campanhas', icon: Megaphone, label: 'Campanhas' },
   { to: '/app/admin/administradoras', icon: Database, label: 'Administradoras' },
   { to: '/app/admin/configuracoes', icon: Shield, label: 'API Keys' },
+  { to: '/app/admin/whatsapp', icon: MessageSquare, label: 'WhatsApp' },
 ]
 
 export default function AppLayout() {

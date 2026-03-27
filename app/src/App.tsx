@@ -15,6 +15,7 @@ import AdminFinanceiroPage from '@/pages/admin/AdminFinanceiroPage'
 import AdminCampanhasPage from '@/pages/admin/AdminCampanhasPage'
 import AdminAdministradorasPage from '@/pages/admin/AdminAdministradorasPage'
 import AdminConfigPage from '@/pages/admin/AdminConfigPage'
+import AdminWhatsAppPage from '@/pages/admin/AdminWhatsAppPage'
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="admin/campanhas" element={<AdminRoute><AdminCampanhasPage /></AdminRoute>} />
             <Route path="admin/administradoras" element={<AdminRoute><AdminAdministradorasPage /></AdminRoute>} />
             <Route path="admin/configuracoes" element={<AdminRoute><AdminConfigPage /></AdminRoute>} />
+            <Route path="admin/whatsapp" element={<AdminRoute><AdminWhatsAppPage /></AdminRoute>} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
