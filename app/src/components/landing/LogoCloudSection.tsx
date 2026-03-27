@@ -2,13 +2,11 @@ import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 
 const admins = [
+  { nome: 'Banco do Brasil', logo: '/assets/banco-do-brasil.png' },
   { nome: 'Itaú', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/200px-Banco_Ita%C3%BA_logo.svg.png' },
-  { nome: 'Banco do Brasil', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Banco_do_Brasil_logo.svg/200px-Banco_do_Brasil_logo.svg.png' },
-  { nome: 'Santander', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Banco_Santander_Logotipo.svg/200px-Banco_Santander_Logotipo.svg.png' },
-  { nome: 'Magalu', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Magazine_Luiza_logo_%282019%29.svg/200px-Magazine_Luiza_logo_%282019%29.svg.png' },
-  { nome: 'Reconomia', initials: 'R' },
-  { nome: 'Breitkopf', initials: 'B' },
-  { nome: 'Âncora', initials: 'Â' },
+  { nome: 'Santander', logo: '/assets/santander.png' },
+  { nome: 'Breitkopf', logo: '/assets/bkf.png' },
+  { nome: 'Âncora', logo: '/assets/ancora.webp' },
 ]
 
 export default function LogoCloudSection() {
@@ -23,14 +21,7 @@ export default function LogoCloudSection() {
             <InfiniteSlider duration={30} durationOnHover={60} gap={56}>
               {admins.map((admin) => (
                 <div key={admin.nome} className="flex items-center gap-3 px-2">
-                  {admin.logo ? (
-                    <img src={admin.logo} alt={admin.nome} className="h-8 w-auto object-contain" />
-                  ) : (
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#0D1B4B] text-xs font-bold text-[#CCEE00]">
-                      {admin.initials}
-                    </span>
-                  )}
-                  <span className="whitespace-nowrap text-sm font-semibold text-gray-600">{admin.nome}</span>
+                  <img src={admin.logo} alt={admin.nome} className="h-8 w-auto object-contain" />
                 </div>
               ))}
             </InfiniteSlider>
