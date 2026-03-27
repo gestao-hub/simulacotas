@@ -1,15 +1,28 @@
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 
-const admins = [
-  { nome: 'Banco do Brasil', logo: '/assets/banco-do-brasil.png', h: 'h-8' },
-  { nome: 'Itaú', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/200px-Banco_Ita%C3%BA_logo.svg.png', h: 'h-8' },
-  { nome: 'Santander', logo: '/assets/santander.png', h: 'h-8' },
-  { nome: 'Breitkopf', logo: '/assets/bkf.png', h: 'h-8' },
-  { nome: 'Âncora', logo: '/assets/ancora.webp', h: 'h-10' },
-]
+interface Admin {
+  id: string
+  nome: string
+  logo_url: string | null
+}
 
 export default function LogoCloudSection() {
+  const [admins, setAdmins] = useState<Admin[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('administradoras')
+      .select('id, nome, logo_url')
+      .eq('is_active', true)
+      .order('ordem')
+      .then(({ data }) => setAdmins((data ?? []).filter((a) => a.logo_url)))
+  }, [])
+
+  if (admins.length === 0) return null
+
   return (
     <section className="pb-16 md:pb-24">
       <div className="group relative mx-auto max-w-6xl px-6">
@@ -20,8 +33,8 @@ export default function LogoCloudSection() {
           <div className="relative py-6 md:w-[calc(100%-11rem)]">
             <InfiniteSlider duration={30} durationOnHover={60} gap={56}>
               {admins.map((admin) => (
-                <div key={admin.nome} className="flex items-center gap-3 px-2">
-                  <img src={admin.logo} alt={admin.nome} className={`${admin.h} w-auto object-contain`} />
+                <div key={admin.id} className="flex items-center gap-3 px-2">
+                  <img src={admin.logo_url!} alt={admin.nome} className="h-8 w-auto object-contain" />
                 </div>
               ))}
             </InfiniteSlider>
