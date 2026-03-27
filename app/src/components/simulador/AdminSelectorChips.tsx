@@ -11,12 +11,12 @@ const logoMap: Record<string, string> = {
   'Itaú': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/200px-Banco_Ita%C3%BA_logo.svg.png',
   'Banco do Brasil': '/assets/banco-do-brasil.png',
   'Santander': '/assets/santander.png',
-  'Magalu': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Magazine_Luiza_logo_%282019%29.svg/200px-Magazine_Luiza_logo_%282019%29.svg.png',
+  'Magalu': '/assets/magalu.png',
   'Breitkopf': '/assets/bkf.png',
   'Âncora': '/assets/ancora.webp',
 }
 
-const hiddenAdmins = ['Reconomia', 'Magalu']
+const hiddenAdmins = ['Reconomia']
 
 export default function AdminSelectorChips({ administradoras, selectedId, onSelect }: Props) {
   return (
