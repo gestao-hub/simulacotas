@@ -143,13 +143,17 @@ export function gerarHTMLProposta(p: PDFParams): string {
 </html>`
 }
 
-export function abrirPDFNovaAba(html: string) {
+export function abrirPDFNovaAba(html: string, preOpenedWin?: Window | null) {
   const blob = new Blob([html], { type: 'text/html' })
   const url = URL.createObjectURL(blob)
-  const win = window.open(url, '_blank')
-  if (win) {
-    win.onload = () => {
-      win.print()
+
+  if (preOpenedWin) {
+    preOpenedWin.location.href = url
+    preOpenedWin.onload = () => preOpenedWin.print()
+  } else {
+    const win = window.open(url, '_blank')
+    if (win) {
+      win.onload = () => win.print()
     }
   }
 }

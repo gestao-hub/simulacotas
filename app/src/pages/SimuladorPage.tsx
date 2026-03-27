@@ -72,9 +72,17 @@ export default function SimuladorPage() {
     }
   }
 
-  const handleGerarPDF = async () => {
+  const handleGerarPDF = () => {
     if (!sim.resumo || !selectedAdmin) return
-    await salvarEGerar('pdf')
+
+    // Abrir janela SINCRONAMENTE (antes de qualquer async) para evitar bloqueio de pop-up
+    const win = window.open('', '_blank')
+    if (!win) {
+      alert('Permita pop-ups para gerar o PDF')
+      return
+    }
+
+    // Gerar HTML e exibir na janela já aberta
     const html = gerarHTMLProposta({
       corretorNome: profile?.full_name ?? '',
       corretorWhatsapp: profile?.whatsapp ?? '',
@@ -87,12 +95,15 @@ export default function SimuladorPage() {
       categoria: sim.categoria,
       resumo: sim.resumo,
     })
-    abrirPDFNovaAba(html)
+    abrirPDFNovaAba(html, win)
+
+    // Salvar no banco em background (fire-and-forget)
+    salvarEGerar('pdf')
   }
 
-  const handleWhatsApp = async () => {
+  const handleWhatsApp = () => {
     if (!sim.resumo) return
-    await salvarEGerar('whatsapp_text')
+    salvarEGerar('whatsapp_text')
     const texto = [
       `*Simulação de Consórcio${selectedAdmin ? ` — ${selectedAdmin.nome}` : ''}*`,
       '━━━━━━━━━━━━━━━━━━━',
