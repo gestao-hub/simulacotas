@@ -1,7 +1,18 @@
+import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Lock } from 'lucide-react'
 import { formatBRL, formatPct } from '@/hooks/useSimulador'
+
+function formatNumber(n: number): string {
+  return n.toLocaleString('pt-BR')
+}
+
+function parseFormattedNumber(s: string): number {
+  const clean = s.replace(/\./g, '').replace(',', '.')
+  const num = Number(clean)
+  return isNaN(num) ? 0 : num
+}
 
 interface CampoEditavelProps {
   label: string
@@ -16,6 +27,51 @@ interface CampoEditavelProps {
 }
 
 export function CampoEditavel({ label, value, onChange, prefix, suffix, step = 1, min, max, hint }: CampoEditavelProps) {
+  const isMonetary = prefix === 'R$'
+  const [displayValue, setDisplayValue] = useState(isMonetary ? formatNumber(value) : String(value))
+  const [isFocused, setIsFocused] = useState(false)
+
+  useEffect(() => {
+    if (!isFocused) {
+      setDisplayValue(isMonetary ? formatNumber(value) : String(value))
+    }
+  }, [value, isFocused, isMonetary])
+
+  if (isMonetary) {
+    return (
+      <div className="space-y-1.5">
+        <Label className="text-xs font-medium text-gray-500">
+          {label}
+          {hint && <span className="ml-1 text-gray-400">{hint}</span>}
+        </Label>
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
+            R$
+          </span>
+          <Input
+            type="text"
+            inputMode="numeric"
+            value={displayValue}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => {
+              setIsFocused(false)
+              const num = parseFormattedNumber(displayValue)
+              onChange(num)
+              setDisplayValue(formatNumber(num))
+            }}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^\d.,]/g, '')
+              setDisplayValue(raw)
+              const num = parseFormattedNumber(raw)
+              if (num > 0) onChange(num)
+            }}
+            className="h-10 border border-gray-200 bg-gray-50 pl-9 font-semibold text-gray-900 focus:border-[var(--color-navy)] focus:ring-[var(--color-navy)]/20"
+          />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-1.5">
       <Label className="text-xs font-medium text-gray-500">
