@@ -4,7 +4,6 @@ import { useTrialStatus } from '@/hooks/useTrialStatus'
 import TrialBanner from '@/components/trial/TrialBanner'
 import TrialExpiredModal from '@/components/trial/TrialExpiredModal'
 import { Home, PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 const corretorLinks = [
   { to: '/app', icon: Home, label: 'Início' },
@@ -33,28 +32,28 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-[#F5F5F7]">
       {/* Sidebar — desktop */}
-      <aside className="hidden w-64 flex-col border-r border-[var(--color-border)] bg-white lg:flex">
-        <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-4">
+      <aside className="hidden w-64 flex-col border-r border-gray-100 bg-[#FAFAFA] lg:flex">
+        <div className="flex items-center gap-3 px-6 py-5">
           <img src="/assets/icone.png" alt="SC" className="h-8 w-8" />
           <span className="text-lg font-bold text-[var(--color-navy)]">
             Simula<span className="text-[var(--color-lime-dark)]">Cotas</span>
           </span>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-4">
-          <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">Corretor</p>
+        <nav className="flex-1 space-y-1 px-3 py-2">
+          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Menu</p>
           {corretorLinks.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
               end={to === '/app'}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? 'bg-[var(--color-navy)] text-white'
-                    : 'text-[var(--color-foreground)] hover:bg-[var(--color-lime-faint)]'
+                    ? 'bg-white text-[var(--color-navy)] shadow-sm font-semibold'
+                    : 'text-gray-400 hover:bg-white/60 hover:text-gray-600'
                 }`
               }
             >
@@ -65,18 +64,18 @@ export default function AppLayout() {
 
           {isAdmin && (
             <>
-              <div className="my-3 h-px bg-[var(--color-border)]" />
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">Admin</p>
+              <div className="my-4 mx-3 h-px bg-gray-100" />
+              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Admin</p>
               {adminLinks.map(({ to, icon: Icon, label }) => (
                 <NavLink
                   key={to}
                   to={to}
                   end={to === '/app/admin'}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-[var(--color-navy)] text-white'
-                        : 'text-[var(--color-foreground)] hover:bg-[var(--color-lime-faint)]'
+                        ? 'bg-white text-[var(--color-navy)] shadow-sm font-semibold'
+                        : 'text-gray-400 hover:bg-white/60 hover:text-gray-600'
                     }`
                   }
                 >
@@ -88,51 +87,58 @@ export default function AppLayout() {
           )}
         </nav>
 
-        <div className="border-t border-[var(--color-border)] px-3 py-3">
-          <div className="mb-2 flex items-center gap-2 px-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-navy)] text-xs font-bold text-[var(--color-lime)]">
-              {profile?.full_name?.charAt(0)?.toUpperCase() ?? 'C'}
+        <div className="px-3 pb-4">
+          <div className="rounded-2xl bg-white p-3 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-navy)] text-sm font-bold text-[var(--color-lime)]">
+                {profile?.full_name?.charAt(0)?.toUpperCase() ?? 'C'}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-gray-900">{profile?.full_name ?? 'Corretor'}</p>
+                <p className="truncate text-xs text-gray-400">{profile?.email}</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-[var(--color-foreground)]">{profile?.full_name ?? 'Corretor'}</p>
-              <p className="truncate text-xs text-[var(--color-muted)]">{profile?.email}</p>
+            <div className="mt-3 flex items-center justify-between">
               {trial.isPaidUser && (
-                <span className="mt-1 inline-block rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">Pro</span>
+                <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-[10px] font-bold text-green-600">Pro</span>
               )}
               {trial.isTrialActive && (
-                <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-600">
                   Trial · {trial.daysRemaining}d
                 </span>
               )}
               {trial.isTrialExpired && (
-                <span className="mt-1 inline-block rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700">Expirado</span>
+                <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-500">Expirado</span>
               )}
+              {!trial.isPaidUser && !trial.isTrialActive && !trial.isTrialExpired && <span />}
+              <button
+                onClick={handleSignOut}
+                className="rounded-lg p-1.5 text-gray-300 transition-colors hover:bg-gray-50 hover:text-gray-500"
+              >
+                <LogOut size={16} />
+              </button>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-[var(--color-muted)]" onClick={handleSignOut}>
-            <LogOut size={16} />
-            Sair
-          </Button>
         </div>
       </aside>
 
       {/* Main content */}
       <main className="flex-1 overflow-auto">
         {/* Mobile header */}
-        <header className="flex items-center justify-between border-b border-[var(--color-border)] bg-white px-4 py-3 lg:hidden">
-          <div className="flex items-center gap-2">
+        <header className="flex items-center justify-between bg-white/80 px-5 py-3 backdrop-blur-xl lg:hidden">
+          <div className="flex items-center gap-2.5">
             <img src="/assets/icone.png" alt="SC" className="h-7 w-7" />
             <span className="text-base font-bold text-[var(--color-navy)]">
               Simula<span className="text-[var(--color-lime-dark)]">Cotas</span>
             </span>
           </div>
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-navy)] text-[10px] font-bold text-[var(--color-lime)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-navy)] text-[10px] font-bold text-[var(--color-lime)]">
             {profile?.full_name?.charAt(0)?.toUpperCase() ?? 'C'}
           </div>
         </header>
 
         <TrialBanner />
-        <div className="p-4 pb-24 lg:p-8 lg:pb-8">
+        <div className="p-5 pb-28 lg:p-8 lg:pb-8">
           <Outlet />
         </div>
       </main>
@@ -140,21 +146,21 @@ export default function AppLayout() {
       <TrialExpiredModal />
 
       {/* Bottom nav — mobile */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-[var(--color-border)] bg-white lg:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-gray-100 bg-white/80 backdrop-blur-xl lg:hidden">
         {corretorLinks.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/app'}
             className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-semibold transition-colors ${
+              `flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-semibold transition-all duration-200 ${
                 isActive
                   ? 'text-[var(--color-navy)]'
-                  : 'text-[var(--color-muted)]'
+                  : 'text-gray-300'
               }`
             }
           >
-            <Icon size={20} />
+            <Icon size={22} />
             {label}
           </NavLink>
         ))}

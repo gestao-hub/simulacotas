@@ -18,13 +18,13 @@ interface CampoEditavelProps {
 export function CampoEditavel({ label, value, onChange, prefix, suffix, step = 1, min, max, hint }: CampoEditavelProps) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs font-bold uppercase tracking-wider text-[var(--color-navy)]">
+      <Label className="text-xs font-medium text-gray-500">
         {label}
-        {hint && <span className="ml-1 font-normal normal-case text-[var(--color-muted)]">{hint}</span>}
+        {hint && <span className="ml-1 text-gray-400">{hint}</span>}
       </Label>
       <div className="relative">
         {prefix && (
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-[var(--color-muted)]">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
             {prefix}
           </span>
         )}
@@ -35,10 +35,10 @@ export function CampoEditavel({ label, value, onChange, prefix, suffix, step = 1
           step={step}
           min={min}
           max={max}
-          className={`h-10 border-2 border-[var(--color-lime)] bg-[var(--color-lime-faint)] font-bold text-[var(--color-navy)] focus:border-[var(--color-lime-dark)] focus:ring-[var(--color-lime)]/30 ${prefix ? 'pl-9' : ''} ${suffix ? 'pr-9' : ''}`}
+          className={`h-10 border border-gray-200 bg-gray-50 font-semibold text-gray-900 focus:border-[var(--color-navy)] focus:ring-[var(--color-navy)]/20 ${prefix ? 'pl-9' : ''} ${suffix ? 'pr-9' : ''}`}
         />
         {suffix && (
-          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-[var(--color-muted)]">
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400">
             {suffix}
           </span>
         )}
@@ -59,15 +59,15 @@ export function CampoCalculado({ label, value, formato = 'moeda', destaque = fal
 
   return (
     <div className="space-y-1.5">
-      <Label className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[var(--color-navy)]">
-        <Lock size={11} className="text-[var(--color-muted)]" />
+      <Label className="flex items-center gap-1 text-xs font-medium text-gray-500">
+        <Lock size={11} className="text-gray-400" />
         {label}
       </Label>
       <div
-        className={`flex h-10 items-center rounded-md px-3 text-sm font-bold ${
+        className={`flex h-10 items-center rounded-md px-3 text-sm font-semibold ${
           destaque
-            ? 'border-2 border-[var(--color-lime)] bg-[var(--color-navy)] text-[var(--color-lime)]'
-            : 'border border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-navy)]'
+            ? 'border border-[var(--color-navy)] bg-[var(--color-navy)] text-white'
+            : 'border border-gray-200 bg-white text-gray-900'
         }`}
       >
         {formatted}
@@ -86,13 +86,13 @@ interface CampoTextoProps {
 export function CampoTexto({ label, value, onChange, placeholder }: CampoTextoProps) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs font-bold uppercase tracking-wider text-[var(--color-navy)]">{label}</Label>
+      <Label className="text-xs font-medium text-gray-500">{label}</Label>
       <Input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-10 border-2 border-[var(--color-lime)] bg-[var(--color-lime-faint)] font-semibold text-[var(--color-navy)] placeholder:font-normal placeholder:text-[var(--color-muted)] focus:border-[var(--color-lime-dark)]"
+        className="h-10 border border-gray-200 bg-gray-50 font-semibold text-gray-900 placeholder:font-normal placeholder:text-gray-400 focus:border-[var(--color-navy)]"
       />
     </div>
   )

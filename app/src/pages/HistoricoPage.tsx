@@ -49,57 +49,59 @@ export default function HistoricoPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-2xl font-bold text-[var(--color-navy)]">Histórico</h1>
-        {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}
+      <div className="min-h-screen bg-[#F5F5F7] space-y-4 p-6">
+        <h1 className="text-2xl font-bold text-gray-900">Histórico</h1>
+        {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-2xl" />)}
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-h-screen bg-[#F5F5F7] space-y-4 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--color-navy)]">Histórico</h1>
-        <span className="text-sm text-[var(--color-muted)]">{simulacoes.length} simulações</span>
+        <h1 className="text-2xl font-bold text-gray-900">Histórico</h1>
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600">{simulacoes.length} simulações</span>
       </div>
 
       {simulacoes.length === 0 ? (
-        <Card className="flex flex-col items-center gap-3 p-8 text-center">
-          <FileText size={40} className="text-[var(--color-muted)]" />
-          <p className="text-[var(--color-muted)]">Nenhuma simulação salva ainda.</p>
+        <Card className="flex flex-col items-center gap-4 rounded-2xl bg-white p-12 text-center shadow-sm">
+          <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-50">
+            <FileText size={32} className="text-gray-300" />
+          </div>
+          <p className="text-gray-400">Nenhuma simulação salva ainda.</p>
           <a href="/app/simulador">
-            <Button className="bg-[var(--color-navy)]">Criar simulação</Button>
+            <Button className="rounded-xl bg-[var(--color-navy)] transition-all duration-200 hover:opacity-90">Criar simulação</Button>
           </a>
         </Card>
       ) : (
         simulacoes.map((sim) => (
-          <Card key={sim.id} className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--color-navy)] text-xs font-bold text-[var(--color-lime)]">
+          <Card key={sim.id} className="group flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-50 text-xs font-bold text-gray-500">
               {sim.administradoras?.nome?.charAt(0) ?? 'S'}
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="truncate text-sm font-bold text-[var(--color-navy)]">
+                <span className="truncate text-sm font-semibold text-gray-900">
                   {sim.cliente_nome || 'Sem cliente'}
                 </span>
-                <span className="shrink-0 rounded-full bg-[var(--color-lime-faint)] px-2 py-0.5 text-[10px] font-bold text-[var(--color-navy)]">
+                <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
                   {planoLabel[sim.plano] ?? sim.plano}
                 </span>
               </div>
-              <div className="mt-0.5 flex items-center gap-3 text-xs text-[var(--color-muted)]">
+              <div className="mt-0.5 flex items-center gap-3 text-xs text-gray-400">
                 <span>{sim.administradoras?.nome}</span>
                 <span>{formatBRL(sim.resumo?.carta_credito ?? 0)}</span>
                 <span>{sim.resumo?.prazo_meses}m</span>
               </div>
-              <p className="mt-0.5 text-[10px] text-[var(--color-muted)]">
+              <p className="mt-0.5 text-[10px] text-gray-400">
                 {new Date(sim.created_at).toLocaleDateString('pt-BR')} às {new Date(sim.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
-            <div className="flex shrink-0 gap-1">
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigator.clipboard.writeText(JSON.stringify(sim.resumo))}>
+            <div className="flex shrink-0 gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 transition-colors duration-150 hover:text-gray-600" onClick={() => navigator.clipboard.writeText(JSON.stringify(sim.resumo))}>
                 <Copy size={14} />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-700" onClick={() => handleExcluir(sim.id)}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-400 transition-colors duration-150 hover:text-red-600" onClick={() => handleExcluir(sim.id)}>
                 <Trash2 size={14} />
               </Button>
             </div>

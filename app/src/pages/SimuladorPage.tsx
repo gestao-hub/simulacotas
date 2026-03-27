@@ -111,11 +111,11 @@ export default function SimuladorPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-bold text-[var(--color-navy)]">Nova Simulação</h1>
+      <h1 className="text-2xl font-bold text-gray-900">Nova Simulação</h1>
 
       {/* Administradora */}
       <section>
-        <Label className="mb-2 block text-xs font-bold uppercase tracking-wider text-[var(--color-muted)]">
+        <Label className="mb-2 block text-sm font-medium text-gray-500">
           Administradora
         </Label>
         <AdminSelectorChips
@@ -128,7 +128,7 @@ export default function SimuladorPage() {
       {/* Plano + Categoria */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted)]">Plano</Label>
+          <Label className="text-sm font-medium text-gray-500">Plano</Label>
           <Tabs value={sim.plano} onValueChange={(v) => sim.setPlano(v as PlanoTipo)}>
             <TabsList className="w-full">
               {(Object.keys(planoLabels) as PlanoTipo[])
@@ -143,7 +143,7 @@ export default function SimuladorPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted)]">Categoria</Label>
+          <Label className="text-sm font-medium text-gray-500">Categoria</Label>
           <Select value={sim.categoria} onValueChange={(v) => sim.setCategoria(v as typeof sim.categoria)}>
             <SelectTrigger className="h-10 font-semibold">
               <SelectValue />
@@ -225,12 +225,12 @@ export default function SimuladorPage() {
           </div>
 
           {sim.cotas7030.map((cota, i) => (
-            <div key={i} className="rounded-xl border border-[var(--color-border)] bg-white p-4">
+            <div key={i} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
               <div className="mb-3 flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--color-navy)] text-xs font-bold text-[var(--color-lime)]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--color-navy)] text-xs font-bold text-white">
                   {i + 1}
                 </span>
-                <span className="text-sm font-bold text-[var(--color-navy)]">Cota {i + 1}</span>
+                <span className="text-sm font-semibold text-gray-900">Cota {i + 1}</span>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <CampoEditavel label="Prazo" value={cota.prazo} onChange={(v) => sim.updateCota7030(i, 'prazo', v)} hint="meses" min={1} />
@@ -267,9 +267,6 @@ export default function SimuladorPage() {
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="h-5 w-1 rounded-sm bg-[var(--color-lime)]" />
-      <h3 className="text-xs font-black uppercase tracking-wider text-[var(--color-navy)]">{children}</h3>
-    </div>
+    <h3 className="text-lg font-semibold text-gray-900">{children}</h3>
   )
 }

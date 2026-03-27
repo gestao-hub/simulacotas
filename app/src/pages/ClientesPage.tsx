@@ -61,48 +61,50 @@ export default function ClientesPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="min-h-screen bg-[#F5F5F7] space-y-4 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--color-navy)]">Clientes</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger>
-            <Button className="gap-2 bg-[var(--color-navy)]"><Plus size={16} /> Novo cliente</Button>
+            <Button className="gap-2 rounded-xl bg-[var(--color-navy)] transition-all duration-200 hover:opacity-90"><Plus size={16} /> Novo cliente</Button>
           </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Novo Cliente</DialogTitle></DialogHeader>
-            <div className="space-y-3">
-              <div><Label>Nome *</Label><Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome completo" /></div>
-              <div><Label>Telefone</Label><Input value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="(00) 00000-0000" /></div>
-              <div><Label>Email</Label><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@exemplo.com" type="email" /></div>
-              <div><Label>Notas</Label><Input value={notas} onChange={(e) => setNotas(e.target.value)} placeholder="Observações..." /></div>
-              <Button onClick={handleSalvar} className="w-full bg-[var(--color-navy)]">Salvar</Button>
+          <DialogContent className="rounded-2xl">
+            <DialogHeader><DialogTitle className="text-lg font-semibold text-gray-900">Novo Cliente</DialogTitle></DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-1.5"><Label className="text-sm font-medium text-gray-700">Nome *</Label><Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome completo" className="rounded-xl border-gray-200 bg-gray-50 transition-colors duration-150 focus:bg-white" /></div>
+              <div className="space-y-1.5"><Label className="text-sm font-medium text-gray-700">Telefone</Label><Input value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="(00) 00000-0000" className="rounded-xl border-gray-200 bg-gray-50 transition-colors duration-150 focus:bg-white" /></div>
+              <div className="space-y-1.5"><Label className="text-sm font-medium text-gray-700">Email</Label><Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@exemplo.com" type="email" className="rounded-xl border-gray-200 bg-gray-50 transition-colors duration-150 focus:bg-white" /></div>
+              <div className="space-y-1.5"><Label className="text-sm font-medium text-gray-700">Notas</Label><Input value={notas} onChange={(e) => setNotas(e.target.value)} placeholder="Observações..." className="rounded-xl border-gray-200 bg-gray-50 transition-colors duration-150 focus:bg-white" /></div>
+              <Button onClick={handleSalvar} className="w-full rounded-xl bg-[var(--color-navy)] transition-all duration-200 hover:opacity-90">Salvar</Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
 
       {loading ? (
-        <p className="text-[var(--color-muted)]">Carregando...</p>
+        <p className="text-gray-400">Carregando...</p>
       ) : clientes.length === 0 ? (
-        <Card className="flex flex-col items-center gap-3 p-8 text-center">
-          <Users size={40} className="text-[var(--color-muted)]" />
-          <p className="text-[var(--color-muted)]">Nenhum cliente cadastrado.</p>
+        <Card className="flex flex-col items-center gap-4 rounded-2xl bg-white p-12 text-center shadow-sm">
+          <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-50">
+            <Users size={32} className="text-gray-300" />
+          </div>
+          <p className="text-gray-400">Nenhum cliente cadastrado.</p>
         </Card>
       ) : (
         clientes.map((c) => (
-          <Card key={c.id} className="flex items-center gap-4 p-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-lime-faint)] text-sm font-bold text-[var(--color-navy)]">
+          <Card key={c.id} className="group flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-sm font-semibold text-gray-500">
               {c.nome.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold text-[var(--color-navy)]">{c.nome}</p>
-              <div className="flex items-center gap-3 text-xs text-[var(--color-muted)]">
-                {c.telefone && <span className="flex items-center gap-1"><Phone size={10} /> {c.telefone}</span>}
-                {c.email && <span className="flex items-center gap-1"><Mail size={10} /> {c.email}</span>}
+              <p className="truncate text-sm font-semibold text-gray-900">{c.nome}</p>
+              <div className="flex items-center gap-3 text-xs text-gray-400">
+                {c.telefone && <span className="flex items-center gap-1"><Phone size={10} className="text-gray-300" /> {c.telefone}</span>}
+                {c.email && <span className="flex items-center gap-1"><Mail size={10} className="text-gray-300" /> {c.email}</span>}
               </div>
-              {c.notas && <p className="mt-0.5 truncate text-xs text-[var(--color-muted)] italic">{c.notas}</p>}
+              {c.notas && <p className="mt-0.5 truncate text-xs text-gray-400 italic">{c.notas}</p>}
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-red-500" onClick={() => handleExcluir(c.id)}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-red-400 opacity-0 transition-all duration-200 hover:text-red-600 group-hover:opacity-100" onClick={() => handleExcluir(c.id)}>
               <Trash2 size={14} />
             </Button>
           </Card>

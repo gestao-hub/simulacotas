@@ -15,16 +15,16 @@ export default function AdminSelectorChips({ administradoras, selectedId, onSele
           key={admin.id}
           onClick={() => onSelect(admin)}
           className={cn(
-            'flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all',
+            'flex shrink-0 items-center gap-2.5 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-all',
             selectedId === admin.id
-              ? 'border-[var(--color-lime)] bg-[var(--color-navy)] text-[var(--color-lime)]'
-              : 'border-[var(--color-border)] bg-white text-[var(--color-foreground)] hover:border-[var(--color-lime-dark)] hover:bg-[var(--color-lime-faint)]'
+              ? 'border-[var(--color-navy)] bg-white text-[var(--color-navy)] shadow-sm'
+              : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100'
           )}
         >
           {admin.logo_url ? (
             <img src={admin.logo_url} alt={admin.nome} className="h-5 w-5 rounded-full object-contain" />
           ) : (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-navy-light)] text-[10px] font-bold text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-[10px] font-bold text-gray-600">
               {admin.nome.charAt(0)}
             </span>
           )}

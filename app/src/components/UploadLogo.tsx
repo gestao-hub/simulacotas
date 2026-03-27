@@ -53,21 +53,24 @@ export default function UploadLogo() {
   }
 
   return (
-    <div className="space-y-2">
-      <p className="text-xs font-bold uppercase tracking-wider text-[var(--color-navy)]">Logo</p>
+    <div className="space-y-2 pt-1">
+      <p className="text-sm font-medium text-gray-900">Logo</p>
       {profile?.logo_corretor_url ? (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
           <img
             src={profile.logo_corretor_url}
             alt="Logo"
-            className="h-12 w-12 rounded-lg border object-contain"
+            className="h-14 w-14 rounded-xl border border-gray-200 bg-white object-contain p-1"
           />
-          <Button variant="ghost" size="sm" onClick={handleRemove} className="text-red-500">
-            <X size={14} className="mr-1" /> Remover
+          <Button variant="ghost" size="sm" onClick={handleRemove} className="rounded-xl text-red-400 hover:bg-red-50 hover:text-red-500">
+            <X size={14} className="mr-1.5" /> Remover
           </Button>
         </div>
       ) : (
-        <div>
+        <div
+          onClick={() => fileRef.current?.click()}
+          className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 py-8 transition-colors hover:border-gray-300 hover:bg-gray-100"
+        >
           <input
             ref={fileRef}
             type="file"
@@ -75,17 +78,15 @@ export default function UploadLogo() {
             onChange={handleUpload}
             className="hidden"
           />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="gap-2"
-          >
-            <Upload size={14} />
-            {uploading ? 'Enviando...' : 'Enviar logo'}
-          </Button>
-          <p className="mt-1 text-xs text-[var(--color-muted)]">PNG ou JPG, máx 2MB</p>
+          <div className="flex items-center justify-center rounded-xl bg-white p-2.5 shadow-sm">
+            <Upload size={18} className="text-gray-400" />
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium text-gray-900">
+              {uploading ? 'Enviando...' : 'Enviar logo'}
+            </p>
+            <p className="mt-0.5 text-xs text-gray-400">PNG ou JPG, max 2MB</p>
+          </div>
         </div>
       )}
     </div>

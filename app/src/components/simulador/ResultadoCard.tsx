@@ -32,17 +32,17 @@ export default function ResultadoCard({ resumo, clienteNome, onGerarPDF, onCompa
   ]
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-navy)] to-[var(--color-navy-light)] p-5 shadow-xl">
+    <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-navy)] to-[var(--color-navy-light)] p-6 shadow-lg">
       {/* Header */}
       <div className="mb-4 flex items-center gap-3">
         <img src="/assets/icone.png" alt="SC" className="h-6 w-6" />
-        <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-lime)]">
+        <span className="text-sm font-semibold tracking-wide text-white/70">
           Resumo da Simulação
         </span>
       </div>
 
       {clienteNome && (
-        <p className="mb-3 text-sm font-medium text-white/60">
+        <p className="mb-4 text-sm font-medium text-white/50">
           Cliente: <span className="text-white">{clienteNome}</span>
         </p>
       )}
@@ -52,12 +52,12 @@ export default function ResultadoCard({ resumo, clienteNome, onGerarPDF, onCompa
         {items.map(({ label, value }) => (
           <div
             key={label}
-            className="rounded-xl border-l-[3px] border-[var(--color-lime)] bg-white/[0.07] px-3 py-3"
+            className="rounded-xl bg-white/[0.07] px-3.5 py-3"
           >
-            <p className="text-[10px] font-bold uppercase tracking-wide text-white/50">
+            <p className="text-[11px] font-medium text-white/45">
               {label}
             </p>
-            <p className="mt-1 text-sm font-extrabold text-white">
+            <p className="mt-1 text-sm font-bold text-white">
               {value}
             </p>
           </div>
@@ -65,11 +65,11 @@ export default function ResultadoCard({ resumo, clienteNome, onGerarPDF, onCompa
       </div>
 
       {/* Ações */}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-5 flex gap-3">
         <Button
           onClick={onGerarPDF}
           disabled={salvando}
-          className="flex-1 gap-2 bg-[var(--color-lime)] font-bold text-[var(--color-navy)] hover:bg-[var(--color-lime-dark)]"
+          className="flex-1 gap-2 rounded-xl py-3 bg-[var(--color-lime)] font-bold text-[var(--color-navy)] hover:bg-[var(--color-lime-dark)]"
         >
           <FileText size={16} />
           {salvando ? 'Salvando...' : 'Gerar PDF'}
@@ -78,7 +78,7 @@ export default function ResultadoCard({ resumo, clienteNome, onGerarPDF, onCompa
           onClick={onCompartilharWhatsApp}
           disabled={salvando}
           variant="outline"
-          className="flex-1 gap-2 border-[var(--color-lime)]/30 font-bold text-white hover:bg-white/10 hover:text-[var(--color-lime)]"
+          className="flex-1 gap-2 rounded-xl py-3 border-white/20 font-bold text-white hover:bg-white/10 hover:text-white"
         >
           <Share2 size={16} />
           WhatsApp
