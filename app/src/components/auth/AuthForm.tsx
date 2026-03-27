@@ -11,12 +11,15 @@ interface AuthFormProps {
   onSuccess?: () => void
 }
 
+const inputClassName = 'border-gray-300 bg-white/60 focus:border-[var(--color-navy)] focus:ring-[var(--color-navy)]/20'
+
 export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormProps) {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isRegister, setIsRegister] = useState(defaultMode === 'register')
   const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -29,7 +32,7 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName } },
+        options: { data: { full_name: fullName, phone } },
       })
       if (error) { setError(error.message); setLoading(false); return }
     } else {
@@ -50,7 +53,7 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
   return (
     <div>
       <div className="mb-6 text-center">
-        <img src="/assets/logo.png" alt="SimulaCotas" className="mx-auto mb-4 h-10" />
+        <img src="/assets/logo.png" alt="SimulaCotas" className="mx-auto mb-4 h-14" />
         <h2 className="text-xl font-bold text-[var(--color-navy)]">
           {isRegister ? 'Criar conta' : 'Entrar'}
         </h2>
@@ -63,16 +66,30 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {isRegister && (
-          <div className="space-y-2">
-            <Label htmlFor="auth-fullName">Nome completo</Label>
-            <Input
-              id="auth-fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Seu nome"
-              required
-            />
-          </div>
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="auth-fullName">Nome completo</Label>
+              <Input
+                id="auth-fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Seu nome"
+                required
+                className={inputClassName}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="auth-phone">WhatsApp</Label>
+              <Input
+                id="auth-phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="(11) 99999-9999"
+                className={inputClassName}
+              />
+            </div>
+          </>
         )}
         <div className="space-y-2">
           <Label htmlFor="auth-email">Email</Label>
@@ -83,6 +100,7 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
             onChange={(e) => setEmail(e.target.value)}
             placeholder="seu@email.com"
             required
+            className={inputClassName}
           />
         </div>
         <div className="space-y-2">
@@ -95,6 +113,7 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
             placeholder="Mínimo 6 caracteres"
             minLength={6}
             required
+            className={inputClassName}
           />
         </div>
 
@@ -102,7 +121,11 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
           <p className="text-sm text-red-500">{error}</p>
         )}
 
-        <Button type="submit" className="w-full bg-[var(--color-navy)] text-white hover:bg-[var(--color-navy-light)]" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full bg-[var(--color-navy)] text-white transition-all duration-200 hover:bg-[var(--color-navy-light)] hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
+          disabled={loading}
+        >
           {loading ? 'Aguarde...' : isRegister ? 'Criar conta grátis' : 'Entrar'}
         </Button>
       </form>
@@ -110,13 +133,13 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
       <div className="mt-4 text-center text-sm">
         {isRegister ? (
           <p>Já tem conta?{' '}
-            <button onClick={() => setIsRegister(false)} className="font-semibold text-[var(--color-navy)] underline">
+            <button onClick={() => setIsRegister(false)} className="font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]">
               Entrar
             </button>
           </p>
         ) : (
           <p>Não tem conta?{' '}
-            <button onClick={() => setIsRegister(true)} className="font-semibold text-[var(--color-navy)] underline">
+            <button onClick={() => setIsRegister(true)} className="font-semibold text-[var(--color-navy)] underline transition-colors hover:text-[var(--color-lime-dark)]">
               Criar conta grátis
             </button>
           </p>
