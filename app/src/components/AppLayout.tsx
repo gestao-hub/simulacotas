@@ -33,49 +33,26 @@ export default function AppLayout() {
 
   return (
     <div className="flex min-h-screen bg-[#F5F5F7]">
-      {/* Sidebar — desktop */}
-      <aside className="hidden w-64 flex-col border-r border-gray-100 bg-[#FAFAFA] lg:flex">
-        <div className="flex items-center gap-3 px-6 py-5">
-          <img src="/assets/icone.png" alt="SC" className="h-8 w-8" />
-          <span className="text-lg font-bold text-[var(--color-navy)]">
-            Simula<span className="text-[var(--color-lime-dark)]">Cotas</span>
-          </span>
-        </div>
+      {/* Sidebar — desktop, fixed */}
+      <aside className="hidden w-64 shrink-0 lg:block">
+        <div className="fixed top-0 left-0 flex h-screen w-64 flex-col border-r border-gray-100 bg-[#FAFAFA]">
+          <div className="px-5 py-5">
+            <img src="/assets/logo.png" alt="SimulaCotas" className="h-9" />
+          </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-2">
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Menu</p>
-          {corretorLinks.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === '/app'}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? 'bg-white text-[var(--color-navy)] shadow-sm font-semibold'
-                    : 'text-gray-400 hover:bg-white/60 hover:text-gray-600'
-                }`
-              }
-            >
-              <Icon size={18} />
-              {label}
-            </NavLink>
-          ))}
-
-          {isAdmin && (
-            <>
-              <div className="my-4 mx-3 h-px bg-gray-100" />
-              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Admin</p>
-              {adminLinks.map(({ to, icon: Icon, label }) => (
+          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
+            <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Menu</p>
+            <div className="space-y-1 rounded-2xl bg-white p-2 shadow-sm">
+              {corretorLinks.map(({ to, icon: Icon, label }) => (
                 <NavLink
                   key={to}
                   to={to}
-                  end={to === '/app/admin'}
+                  end={to === '/app'}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                    `group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? 'bg-white text-[var(--color-navy)] shadow-sm font-semibold'
-                        : 'text-gray-400 hover:bg-white/60 hover:text-gray-600'
+                        ? 'bg-[var(--color-navy)] text-white font-semibold shadow-sm'
+                        : 'text-gray-400 hover:bg-gray-50 hover:text-gray-700 hover:scale-[1.02]'
                     }`
                   }
                 >
@@ -83,55 +60,75 @@ export default function AppLayout() {
                   {label}
                 </NavLink>
               ))}
-            </>
-          )}
-        </nav>
-
-        <div className="px-3 pb-4">
-          <div className="rounded-2xl bg-white p-3 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-navy)] text-sm font-bold text-[var(--color-lime)]">
-                {profile?.full_name?.charAt(0)?.toUpperCase() ?? 'C'}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-gray-900">{profile?.full_name ?? 'Corretor'}</p>
-                <p className="truncate text-xs text-gray-400">{profile?.email}</p>
-              </div>
             </div>
-            <div className="mt-3 flex items-center justify-between">
-              {trial.isPaidUser && (
-                <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-[10px] font-bold text-green-600">Pro</span>
-              )}
-              {trial.isTrialActive && (
-                <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-600">
-                  Trial · {trial.daysRemaining}d
-                </span>
-              )}
-              {trial.isTrialExpired && (
-                <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-500">Expirado</span>
-              )}
-              {!trial.isPaidUser && !trial.isTrialActive && !trial.isTrialExpired && <span />}
-              <button
-                onClick={handleSignOut}
-                className="rounded-lg p-1.5 text-gray-300 transition-colors hover:bg-gray-50 hover:text-gray-500"
-              >
-                <LogOut size={16} />
-              </button>
+
+            {isAdmin && (
+              <>
+                <p className="mt-5 mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-300">Admin</p>
+                <div className="space-y-1 rounded-2xl bg-white p-2 shadow-sm">
+                  {adminLinks.map(({ to, icon: Icon, label }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      end={to === '/app/admin'}
+                      className={({ isActive }) =>
+                        `group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                          isActive
+                            ? 'bg-[var(--color-navy)] text-white font-semibold shadow-sm'
+                            : 'text-gray-400 hover:bg-gray-50 hover:text-gray-700 hover:scale-[1.02]'
+                        }`
+                      }
+                    >
+                      <Icon size={18} />
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
+              </>
+            )}
+          </nav>
+
+          <div className="px-3 pb-4">
+            <div className="rounded-2xl bg-white p-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-navy)] text-sm font-bold text-[var(--color-lime)]">
+                  {profile?.full_name?.charAt(0)?.toUpperCase() ?? 'C'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-gray-900">{profile?.full_name ?? 'Corretor'}</p>
+                  <p className="truncate text-xs text-gray-400">{profile?.email}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                {trial.isPaidUser && (
+                  <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-[10px] font-bold text-green-600">Pro</span>
+                )}
+                {trial.isTrialActive && (
+                  <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-600">
+                    Trial · {trial.daysRemaining}d
+                  </span>
+                )}
+                {trial.isTrialExpired && (
+                  <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-500">Expirado</span>
+                )}
+                {!trial.isPaidUser && !trial.isTrialActive && !trial.isTrialExpired && <span />}
+                <button
+                  onClick={handleSignOut}
+                  className="rounded-lg p-1.5 text-gray-300 transition-colors hover:bg-gray-50 hover:text-gray-500"
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* Main content */}
+      {/* Main content — scrollable */}
       <main className="flex-1 overflow-auto">
         {/* Mobile header */}
-        <header className="flex items-center justify-between bg-white/80 px-5 py-3 backdrop-blur-xl lg:hidden">
-          <div className="flex items-center gap-2.5">
-            <img src="/assets/icone.png" alt="SC" className="h-7 w-7" />
-            <span className="text-base font-bold text-[var(--color-navy)]">
-              Simula<span className="text-[var(--color-lime-dark)]">Cotas</span>
-            </span>
-          </div>
+        <header className="sticky top-0 z-40 flex items-center justify-between bg-white/80 px-5 py-3 backdrop-blur-xl lg:hidden">
+          <img src="/assets/logo.png" alt="SimulaCotas" className="h-7" />
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--color-navy)] text-[10px] font-bold text-[var(--color-lime)]">
             {profile?.full_name?.charAt(0)?.toUpperCase() ?? 'C'}
           </div>

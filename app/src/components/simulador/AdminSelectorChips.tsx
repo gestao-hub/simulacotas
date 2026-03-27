@@ -7,30 +7,41 @@ interface Props {
   onSelect: (admin: Administradora) => void
 }
 
+const logoMap: Record<string, string> = {
+  'Itaú': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/200px-Banco_Ita%C3%BA_logo.svg.png',
+  'Banco do Brasil': '/assets/banco-do-brasil.png',
+  'Santander': '/assets/santander.png',
+  'Breitkopf': '/assets/bkf.png',
+  'Âncora': '/assets/ancora.webp',
+}
+
 export default function AdminSelectorChips({ administradoras, selectedId, onSelect }: Props) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1">
-      {administradoras.map((admin) => (
-        <button
-          key={admin.id}
-          onClick={() => onSelect(admin)}
-          className={cn(
-            'flex shrink-0 items-center gap-2.5 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-all',
-            selectedId === admin.id
-              ? 'border-[var(--color-navy)] bg-white text-[var(--color-navy)] shadow-sm'
-              : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100'
-          )}
-        >
-          {admin.logo_url ? (
-            <img src={admin.logo_url} alt={admin.nome} className="h-5 w-5 rounded-full object-contain" />
-          ) : (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-[10px] font-bold text-gray-600">
-              {admin.nome.charAt(0)}
-            </span>
-          )}
-          {admin.nome}
-        </button>
-      ))}
+    <div className="flex gap-3 overflow-x-auto pb-2">
+      {administradoras.map((admin) => {
+        const logo = admin.logo_url || logoMap[admin.nome]
+        return (
+          <button
+            key={admin.id}
+            onClick={() => onSelect(admin)}
+            className={cn(
+              'flex shrink-0 items-center gap-3 rounded-2xl border-2 px-5 py-3 text-sm font-semibold transition-all duration-200 hover:scale-[1.03] hover:shadow-md',
+              selectedId === admin.id
+                ? 'border-[var(--color-navy)] bg-white text-[var(--color-navy)] shadow-md'
+                : 'border-transparent bg-white text-gray-500 shadow-sm hover:border-gray-200'
+            )}
+          >
+            {logo ? (
+              <img src={logo} alt={admin.nome} className="h-6 w-auto max-w-[80px] object-contain" />
+            ) : (
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gray-100 text-xs font-bold text-gray-500">
+                {admin.nome.charAt(0)}
+              </span>
+            )}
+            {admin.nome}
+          </button>
+        )
+      })}
     </div>
   )
 }

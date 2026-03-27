@@ -113,103 +113,111 @@ export default function SimuladorPage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Nova Simulação</h1>
 
-      {/* Administradora */}
-      <section>
-        <Label className="mb-2 block text-sm font-medium text-gray-500">
-          Administradora
-        </Label>
-        <AdminSelectorChips
-          administradoras={administradoras}
-          selectedId={selectedAdmin?.id ?? null}
-          onSelect={handleSelectAdmin}
+      {/* Administradora + Plano + Categoria + Cliente */}
+      <div className="space-y-5 rounded-2xl bg-white p-5 shadow-sm">
+        <div>
+          <Label className="mb-2 block text-sm font-medium text-gray-500">
+            Administradora
+          </Label>
+          <AdminSelectorChips
+            administradoras={administradoras}
+            selectedId={selectedAdmin?.id ?? null}
+            onSelect={handleSelectAdmin}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-500">Plano</Label>
+            <Tabs value={sim.plano} onValueChange={(v) => sim.setPlano(v as PlanoTipo)}>
+              <TabsList className="w-full">
+                {(Object.keys(planoLabels) as PlanoTipo[])
+                  .filter((p) => !selectedAdmin || selectedAdmin.planos_disponiveis.includes(p))
+                  .map((p) => (
+                    <TabsTrigger key={p} value={p} className="flex-1 text-xs font-bold">
+                      {planoLabels[p]}
+                    </TabsTrigger>
+                  ))}
+              </TabsList>
+            </Tabs>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-gray-500">Categoria</Label>
+            <Select value={sim.categoria} onValueChange={(v) => sim.setCategoria(v as typeof sim.categoria)}>
+              <SelectTrigger className="h-10 font-semibold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="imovel">Imóvel</SelectItem>
+                <SelectItem value="veiculo">Veículo</SelectItem>
+                <SelectItem value="moto">Moto</SelectItem>
+                <SelectItem value="servicos">Serviços</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <CampoTexto
+          label="Cliente"
+          value={sim.clienteNome}
+          onChange={sim.setClienteNome}
+          placeholder="Nome do cliente"
         />
-      </section>
-
-      {/* Plano + Categoria */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-gray-500">Plano</Label>
-          <Tabs value={sim.plano} onValueChange={(v) => sim.setPlano(v as PlanoTipo)}>
-            <TabsList className="w-full">
-              {(Object.keys(planoLabels) as PlanoTipo[])
-                .filter((p) => !selectedAdmin || selectedAdmin.planos_disponiveis.includes(p))
-                .map((p) => (
-                  <TabsTrigger key={p} value={p} className="flex-1 text-xs font-bold">
-                    {planoLabels[p]}
-                  </TabsTrigger>
-                ))}
-            </TabsList>
-          </Tabs>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-gray-500">Categoria</Label>
-          <Select value={sim.categoria} onValueChange={(v) => sim.setCategoria(v as typeof sim.categoria)}>
-            <SelectTrigger className="h-10 font-semibold">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="imovel">Imóvel</SelectItem>
-              <SelectItem value="veiculo">Veículo</SelectItem>
-              <SelectItem value="moto">Moto</SelectItem>
-              <SelectItem value="servicos">Serviços</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
-
-      {/* Cliente */}
-      <CampoTexto
-        label="Cliente"
-        value={sim.clienteNome}
-        onChange={sim.setClienteNome}
-        placeholder="Nome do cliente"
-      />
 
       {/* ─── Linear e 50/50 ─── */}
       {(sim.plano === 'linear' || sim.plano === 'reduzida_50_50') && (
         <>
-          <SectionTitle>Informações do Crédito</SectionTitle>
-          <div className="grid grid-cols-3 gap-3">
-            <CampoEditavel label="Valor do Bem" value={sim.valorBem} onChange={sim.setValorBem} prefix="R$" />
-            <CampoEditavel label="Prazo" value={sim.prazo} onChange={sim.setPrazo} hint="meses" min={1} />
-            <CampoEditavel label="Qtd. Cotas" value={sim.qtdeCotas} onChange={sim.setQtdeCotas} min={1} />
+          <div className="space-y-4 rounded-2xl bg-white p-5 shadow-sm">
+            <SectionTitle>Informações do Crédito</SectionTitle>
+            <div className="grid grid-cols-3 gap-3">
+              <CampoEditavel label="Valor do Bem" value={sim.valorBem} onChange={sim.setValorBem} prefix="R$" />
+              <CampoEditavel label="Prazo" value={sim.prazo} onChange={sim.setPrazo} hint="meses" min={1} />
+              <CampoEditavel label="Qtd. Cotas" value={sim.qtdeCotas} onChange={sim.setQtdeCotas} min={1} />
+            </div>
           </div>
 
-          <SectionTitle>Taxas</SectionTitle>
-          <div className="grid grid-cols-3 gap-3">
-            <CampoEditavel label="Taxa Adm %" value={sim.taxaAdm} onChange={sim.setTaxaAdm} suffix="%" step={0.1} />
-            <CampoEditavel label="Fundo Reserva %" value={sim.fundoReserva} onChange={sim.setFundoReserva} suffix="%" step={0.1} />
-            <CampoCalculado
-              label="% Mensal"
-              value={sim.resultadoLinear?.percentual_mensal ?? sim.resultado5050?.percentual_mensal ?? 0}
-              formato="percentual"
-            />
+          <div className="space-y-4 rounded-2xl bg-white p-5 shadow-sm">
+            <SectionTitle>Taxas</SectionTitle>
+            <div className="grid grid-cols-3 gap-3">
+              <CampoEditavel label="Taxa Adm %" value={sim.taxaAdm} onChange={sim.setTaxaAdm} suffix="%" step={0.1} />
+              <CampoEditavel label="Fundo Reserva %" value={sim.fundoReserva} onChange={sim.setFundoReserva} suffix="%" step={0.1} />
+              <CampoCalculado
+                label="% Mensal"
+                value={sim.resultadoLinear?.percentual_mensal ?? sim.resultado5050?.percentual_mensal ?? 0}
+                formato="percentual"
+              />
+            </div>
           </div>
 
-          <SectionTitle>Estimativa de Lance</SectionTitle>
-          <div className="grid grid-cols-2 gap-3">
-            <CampoEditavel label="% Lance" value={sim.lancePercentual} onChange={sim.setLancePercentual} suffix="%" step={1} min={0} max={100} />
-            <CampoEditavel label="Lance Embutido %" value={sim.lanceEmbutidoPerc} onChange={sim.setLanceEmbutidoPerc} suffix="%" step={0.1} min={0} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <CampoCalculado label="Lance Total" value={sim.resultadoLinear?.lance_total ?? sim.resultado5050?.lance_total ?? 0} />
-            <CampoCalculado label="Recursos Próprios" value={sim.resultadoLinear?.lance_recursos_proprios ?? sim.resultado5050?.lance_recursos_proprios ?? 0} destaque />
+          <div className="space-y-4 rounded-2xl bg-white p-5 shadow-sm">
+            <SectionTitle>Estimativa de Lance</SectionTitle>
+            <div className="grid grid-cols-2 gap-3">
+              <CampoEditavel label="% Lance" value={sim.lancePercentual} onChange={sim.setLancePercentual} suffix="%" step={1} min={0} max={100} />
+              <CampoEditavel label="Lance Embutido %" value={sim.lanceEmbutidoPerc} onChange={sim.setLanceEmbutidoPerc} suffix="%" step={0.1} min={0} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <CampoCalculado label="Lance Total" value={sim.resultadoLinear?.lance_total ?? sim.resultado5050?.lance_total ?? 0} />
+              <CampoCalculado label="Recursos Próprios" value={sim.resultadoLinear?.lance_recursos_proprios ?? sim.resultado5050?.lance_recursos_proprios ?? 0} destaque />
+            </div>
           </div>
 
-          <SectionTitle>Valores Calculados</SectionTitle>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <CampoCalculado label="Valor Total" value={sim.resultadoLinear?.valor_total ?? sim.resultado5050?.valor_total ?? 0} />
-            <CampoCalculado label="Parcela Base" value={sim.resultadoLinear?.parcela_base ?? sim.resultado5050?.parcela_base ?? 0} />
-            <CampoCalculado label="Vl. Bem + Taxas" value={sim.resultadoLinear?.valor_bem_taxas ?? sim.resultado5050?.valor_bem_taxas ?? 0} />
-            <CampoCalculado label="Crédito Líquido" value={sim.resultadoLinear?.credito_liquido ?? sim.resultado5050?.credito_liquido ?? 0} />
-            <CampoCalculado label="Parcela Pós-Lance" value={sim.resultadoLinear?.parcela_pos_lance ?? sim.resultado5050?.parcela_pos_lance ?? 0} destaque />
-            {sim.plano === 'reduzida_50_50' && sim.resultado5050 && (
-              <>
-                <CampoCalculado label="Entrada (50%)" value={sim.resultado5050.parcela_entrada_50} />
-                <CampoCalculado label="Saldo (50%)" value={sim.resultado5050.saldo_financiar_50} />
-              </>
-            )}
+          <div className="space-y-4 rounded-2xl bg-white p-5 shadow-sm">
+            <SectionTitle>Valores Calculados</SectionTitle>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <CampoCalculado label="Valor Total" value={sim.resultadoLinear?.valor_total ?? sim.resultado5050?.valor_total ?? 0} />
+              <CampoCalculado label="Parcela Base" value={sim.resultadoLinear?.parcela_base ?? sim.resultado5050?.parcela_base ?? 0} />
+              <CampoCalculado label="Vl. Bem + Taxas" value={sim.resultadoLinear?.valor_bem_taxas ?? sim.resultado5050?.valor_bem_taxas ?? 0} />
+              <CampoCalculado label="Crédito Líquido" value={sim.resultadoLinear?.credito_liquido ?? sim.resultado5050?.credito_liquido ?? 0} />
+              <CampoCalculado label="Parcela Pós-Lance" value={sim.resultadoLinear?.parcela_pos_lance ?? sim.resultado5050?.parcela_pos_lance ?? 0} destaque />
+              {sim.plano === 'reduzida_50_50' && sim.resultado5050 && (
+                <>
+                  <CampoCalculado label="Entrada (50%)" value={sim.resultado5050.parcela_entrada_50} />
+                  <CampoCalculado label="Saldo (50%)" value={sim.resultado5050.saldo_financiar_50} />
+                </>
+              )}
+            </div>
           </div>
         </>
       )}
@@ -217,11 +225,13 @@ export default function SimuladorPage() {
       {/* ─── 70/30 ─── */}
       {sim.plano === 'reduzida_70_30' && (
         <>
-          <SectionTitle>Taxas</SectionTitle>
-          <div className="grid grid-cols-3 gap-3">
-            <CampoEditavel label="Taxa Adm %" value={sim.taxaAdm} onChange={sim.setTaxaAdm} suffix="%" step={0.1} />
-            <CampoEditavel label="Fundo Reserva %" value={sim.fundoReserva} onChange={sim.setFundoReserva} suffix="%" step={0.1} />
-            <CampoEditavel label="Lance Embutido %" value={sim.lanceEmbutidoPerc} onChange={sim.setLanceEmbutidoPerc} suffix="%" step={0.1} min={0} />
+          <div className="space-y-4 rounded-2xl bg-white p-5 shadow-sm">
+            <SectionTitle>Taxas</SectionTitle>
+            <div className="grid grid-cols-3 gap-3">
+              <CampoEditavel label="Taxa Adm %" value={sim.taxaAdm} onChange={sim.setTaxaAdm} suffix="%" step={0.1} />
+              <CampoEditavel label="Fundo Reserva %" value={sim.fundoReserva} onChange={sim.setFundoReserva} suffix="%" step={0.1} />
+              <CampoEditavel label="Lance Embutido %" value={sim.lanceEmbutidoPerc} onChange={sim.setLanceEmbutidoPerc} suffix="%" step={0.1} min={0} />
+            </div>
           </div>
 
           {sim.cotas7030.map((cota, i) => (
