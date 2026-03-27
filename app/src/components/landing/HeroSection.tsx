@@ -56,35 +56,6 @@ export default function HeroSection() {
               </LiquidButton>
             </div>
 
-            {/* Decorative cards mockup */}
-            <div aria-hidden className="relative mx-auto mt-20 max-w-2xl">
-              <div className="absolute inset-0 bg-radial-[at_50%_50%] from-[#CCEE00]/20 to-transparent to-70%" />
-              <div className="mx-auto w-80 translate-x-4 rounded-2xl border border-white/50 bg-white/60 p-3 backdrop-blur-xl shadow-elevation-3 sm:translate-x-8 [mask-image:linear-gradient(to_bottom,#000_60%,transparent_95%)]">
-                <div className="space-y-3 overflow-hidden rounded-xl border bg-white p-4 shadow-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-[#CCEE00]" />
-                    <span className="text-xs font-bold text-[#0D1B4B]">SimulaCotas Pro</span>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-400">Carta de Crédito</span>
-                      <span className="font-bold text-[#0D1B4B]">R$ 400.000</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-400">Parcela</span>
-                      <span className="font-bold text-[#0D1B4B]">R$ 2.000</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-400">Pós-Lance</span>
-                      <span className="font-bold text-[#AACC00]">R$ 1.200</span>
-                    </div>
-                    <div className="mt-2 h-8 rounded-lg bg-gradient-to-r from-[#0D1B4B] to-[#152260] flex items-center justify-center">
-                      <span className="text-[10px] font-bold text-[#CCEE00]">Gerar PDF</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </AnimatedGroup>
         </div>
       </div>
