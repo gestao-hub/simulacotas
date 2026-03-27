@@ -45,12 +45,16 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
 
-  // Carregar email salvo do localStorage
+  // Carregar login salvo do localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('sc_remember_email')
+    const saved = localStorage.getItem('sc_remember_login')
     if (saved) {
-      setEmail(saved)
-      setRememberMe(true)
+      try {
+        const { email: e, password: p } = JSON.parse(atob(saved))
+        setEmail(e)
+        setPassword(p)
+        setRememberMe(true)
+      } catch { /* ignore */ }
     }
   }, [])
 
@@ -89,12 +93,12 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
       if (error) { setError(error.message); setLoading(false); return }
     }
 
-    // Salvar ou limpar email no localStorage
+    // Salvar ou limpar login no localStorage
     if (!isRegister) {
       if (rememberMe) {
-        localStorage.setItem('sc_remember_email', email)
+        localStorage.setItem('sc_remember_login', btoa(JSON.stringify({ email, password })))
       } else {
-        localStorage.removeItem('sc_remember_email')
+        localStorage.removeItem('sc_remember_login')
       }
     }
 
@@ -260,7 +264,7 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="h-4 w-4 rounded border-gray-300 text-[var(--color-navy)] focus:ring-[var(--color-navy)]/20"
                     />
-                    <span className="text-sm text-gray-500">Lembrar meu email</span>
+                    <span className="text-sm text-gray-500">Lembrar meu login</span>
                   </label>
                 )}
               </>
