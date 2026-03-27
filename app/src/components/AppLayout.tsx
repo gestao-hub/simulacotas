@@ -37,8 +37,8 @@ export default function AppLayout() {
       {/* Sidebar — desktop, fixed */}
       <aside className="hidden w-64 shrink-0 lg:block">
         <div className="fixed top-0 left-0 flex h-screen w-64 flex-col border-r border-gray-100 bg-[#FAFAFA]">
-          <div className="flex justify-center px-5 py-6">
-            <img src="/assets/logo.png" alt="SimulaCotas" className="h-12" />
+          <div className="flex justify-center px-4 pt-4 pb-2">
+            <img src="/assets/logo.png" alt="SimulaCotas" className="h-14 w-auto" />
           </div>
 
           <nav className="flex-1 space-y-4 overflow-y-auto px-3 py-2">
