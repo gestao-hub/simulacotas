@@ -40,7 +40,7 @@ export function useTrialStatus(): TrialStatus {
     const isTrialActive = profile.status === 'trial' && msRemaining > 0
     const isTrialExpired = profile.status === 'trial' && msRemaining <= 0
 
-    const daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60 * 24))
+    const daysRemaining = Math.min(3, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)))
     const hoursRemaining = Math.ceil(msRemaining / (1000 * 60 * 60))
 
     const hasAccess = isAdmin || isPaidUser || isTrialActive
