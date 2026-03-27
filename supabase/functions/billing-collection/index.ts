@@ -57,19 +57,34 @@ serve(async (_req) => {
       if (jaExecutou && jaExecutou.length > 0) continue
 
       const profile = assinatura.profiles as { id: string; full_name: string; email: string; phone: string }
+      const appUrl = "https://simulacotas.com.br"
       const mensagem = (regraAplicavel.template_mensagem ?? "")
         .replace("{{nome}}", profile?.full_name ?? "")
-        .replace("{{link_pagamento}}", `${Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".app")}/app/config`)
-        .replace("{{link_reativacao}}", `${Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".app")}/app`)
+        .replace("{{link_pagamento}}", `${appUrl}/app/checkout`)
+        .replace("{{link_reativacao}}", `${appUrl}/app/checkout`)
 
       let resultado = "pendente"
 
       // Executar ação
       switch (regraAplicavel.acao) {
-        case "whatsapp":
-          // TODO: Integrar com API de WhatsApp (UAZAPI)
-          resultado = "whatsapp_agendado"
+        case "whatsapp": {
+          if (profile?.phone) {
+            const { data: uazapiUrl } = await supabase.from("platform_settings").select("value").eq("key", "UAZAPI_URL").eq("is_active", true).single()
+            const { data: uazapiToken } = await supabase.from("platform_settings").select("value").eq("key", "UAZAPI_TOKEN").eq("is_active", true).single()
+            if (uazapiUrl?.value && uazapiToken?.value) {
+              const cleanPhone = profile.phone.replace(/[\s\-\(\)\+]/g, "")
+              try {
+                await fetch(`${uazapiUrl.value}/send/text`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json", "token": uazapiToken.value },
+                  body: JSON.stringify({ number: cleanPhone, text: mensagem, delay: 2000 }),
+                })
+                resultado = "whatsapp_enviado"
+              } catch { resultado = "whatsapp_falhou" }
+            } else { resultado = "whatsapp_sem_config" }
+          } else { resultado = "whatsapp_sem_telefone" }
           break
+        }
 
         case "email":
           try {

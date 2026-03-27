@@ -63,7 +63,7 @@ serve(async (req) => {
         if (canal === "whatsapp" && prefs && !prefs.whatsapp_opt_in) { results.skipped++; continue }
 
         // Preparar variáveis
-        const appUrl = Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".vercel.app") ?? ""
+        const appUrl = "https://simulacotas.com.br"
         const variables: Record<string, string> = {
           nome: user.full_name || "Corretor",
           email: user.email || "",
