@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -81,48 +80,50 @@ export default function AdminAdministradorasPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--color-navy)]">Administradoras</h1>
-        <Button onClick={openNew} className="gap-2 bg-[var(--color-navy)]"><Plus size={16} /> Nova</Button>
+        <h1 className="text-2xl font-bold text-gray-900">Administradoras</h1>
+        <Button onClick={openNew} className="gap-2 rounded-xl bg-gray-900"><Plus size={16} /> Nova</Button>
       </div>
 
-      <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {admins.map((a) => (
-          <Card key={a.id} className={`flex items-center gap-4 p-4 ${!a.is_active ? 'opacity-50' : ''}`}>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--color-navy)] text-sm font-bold text-[var(--color-lime)]">
-              {a.nome.charAt(0)}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-[var(--color-navy)]">{a.nome}</p>
-              <p className="text-xs text-[var(--color-muted)]">
-                Adm {a.taxa_adm_padrao}% · FR {a.fundo_reserva_padrao}% · Emb {a.lance_embutido_padrao}%
-              </p>
-              <div className="mt-1 flex flex-wrap gap-1">
-                {a.planos_disponiveis.map((p) => (
-                  <Badge key={p} variant="outline" className="text-[10px]">{planoLabel[p] ?? p}</Badge>
-                ))}
+          <div key={a.id} className={`rounded-xl bg-white p-4 shadow-sm ${!a.is_active ? 'opacity-50' : ''}`}>
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-900 text-sm font-bold text-white">
+                {a.nome.charAt(0)}
+              </div>
+              <div className="flex gap-1">
+                <button onClick={() => openEdit(a)} className="rounded-lg p-1.5 text-gray-300 hover:bg-gray-50 hover:text-gray-600">
+                  <Pencil size={14} />
+                </button>
+                <button onClick={() => toggleAtivo(a)} className="rounded-lg p-1.5 text-gray-300 hover:bg-gray-50 hover:text-gray-600">
+                  <Database size={14} className={a.is_active ? 'text-green-500' : 'text-red-400'} />
+                </button>
               </div>
             </div>
-            <div className="flex shrink-0 gap-1">
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(a)}><Pencil size={14} /></Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleAtivo(a)}>
-                <Database size={14} className={a.is_active ? 'text-green-600' : 'text-red-500'} />
-              </Button>
+            <p className="text-sm font-semibold text-gray-900">{a.nome}</p>
+            <p className="mt-1 text-xs text-gray-400">
+              Adm {a.taxa_adm_padrao}% · FR {a.fundo_reserva_padrao}%
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {a.planos_disponiveis.map((p) => (
+                <Badge key={p} variant="outline" className="text-[10px]">{planoLabel[p] ?? p}</Badge>
+              ))}
             </div>
-          </Card>
+          </div>
         ))}
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>{editing ? 'Editar' : 'Nova'} Administradora</DialogTitle></DialogHeader>
+        <DialogContent className="rounded-2xl">
+          <DialogHeader><DialogTitle className="text-gray-900">{editing ? 'Editar' : 'Nova'} Administradora</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            <div><Label>Nome</Label><Input value={nome} onChange={(e) => setNome(e.target.value)} /></div>
+            <div><Label className="text-gray-700">Nome</Label><Input value={nome} onChange={(e) => setNome(e.target.value)} className="rounded-xl bg-gray-50 border-gray-200" /></div>
             <div className="grid grid-cols-3 gap-3">
-              <div><Label>Taxa Adm %</Label><Input type="number" value={taxaAdm} onChange={(e) => setTaxaAdm(e.target.value)} step="0.1" /></div>
-              <div><Label>FR %</Label><Input type="number" value={fr} onChange={(e) => setFr(e.target.value)} step="0.1" /></div>
-              <div><Label>Embutido %</Label><Input type="number" value={embutido} onChange={(e) => setEmbutido(e.target.value)} step="0.1" /></div>
+              <div><Label className="text-gray-700">Taxa Adm %</Label><Input type="number" value={taxaAdm} onChange={(e) => setTaxaAdm(e.target.value)} step="0.1" className="rounded-xl bg-gray-50 border-gray-200" /></div>
+              <div><Label className="text-gray-700">FR %</Label><Input type="number" value={fr} onChange={(e) => setFr(e.target.value)} step="0.1" className="rounded-xl bg-gray-50 border-gray-200" /></div>
+              <div><Label className="text-gray-700">Embutido %</Label><Input type="number" value={embutido} onChange={(e) => setEmbutido(e.target.value)} step="0.1" className="rounded-xl bg-gray-50 border-gray-200" /></div>
             </div>
-            <Button onClick={handleSalvar} className="w-full bg-[var(--color-navy)]">Salvar</Button>
+            <Button onClick={handleSalvar} className="w-full rounded-xl bg-gray-900">Salvar</Button>
           </div>
         </DialogContent>
       </Dialog>

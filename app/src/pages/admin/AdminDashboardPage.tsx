@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Card } from '@/components/ui/card'
 import { Users, CreditCard, FileText, TrendingUp, UserPlus, AlertTriangle } from 'lucide-react'
 
 interface KPIs {
@@ -49,12 +48,12 @@ export default function AdminDashboardPage() {
   }, [])
 
   const cards = kpis ? [
-    { label: 'Corretores', value: kpis.total_corretores, icon: Users, color: 'text-blue-600' },
-    { label: 'Ativos', value: kpis.corretores_ativos, icon: TrendingUp, color: 'text-green-600' },
-    { label: 'Trial', value: kpis.corretores_trial, icon: UserPlus, color: 'text-amber-600' },
-    { label: 'Inadimplentes', value: kpis.corretores_inadimplentes, icon: AlertTriangle, color: 'text-red-600' },
-    { label: 'Simulações', value: kpis.total_simulacoes, icon: FileText, color: 'text-indigo-600' },
-    { label: 'Propostas', value: kpis.total_propostas, icon: CreditCard, color: 'text-purple-600' },
+    { label: 'Corretores', value: kpis.total_corretores, icon: Users, bg: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { label: 'Ativos', value: kpis.corretores_ativos, icon: TrendingUp, bg: 'bg-green-50', iconColor: 'text-green-500' },
+    { label: 'Trial', value: kpis.corretores_trial, icon: UserPlus, bg: 'bg-amber-50', iconColor: 'text-amber-500' },
+    { label: 'Inadimplentes', value: kpis.corretores_inadimplentes, icon: AlertTriangle, bg: 'bg-red-50', iconColor: 'text-red-500' },
+    { label: 'Simulações', value: kpis.total_simulacoes, icon: FileText, bg: 'bg-indigo-50', iconColor: 'text-indigo-500' },
+    { label: 'Propostas', value: kpis.total_propostas, icon: CreditCard, bg: 'bg-purple-50', iconColor: 'text-purple-500' },
   ] : []
 
   const statusBadge = (status: string) => {
@@ -70,33 +69,31 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-[var(--color-navy)]">Admin Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {cards.map(({ label, value, icon: Icon, color }) => (
-          <Card key={label} className="p-4">
-            <div className="flex items-center gap-2">
-              <Icon size={16} className={color} />
-              <span className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">{label}</span>
+        {cards.map(({ label, value, icon: Icon, bg, iconColor }) => (
+          <div key={label} className="rounded-xl bg-white p-4 shadow-sm">
+            <div className={`mb-2 inline-flex rounded-lg p-2 ${bg}`}>
+              <Icon size={16} className={iconColor} />
             </div>
-            <p className="mt-1 text-2xl font-extrabold text-[var(--color-navy)]">{value}</p>
-          </Card>
+            <p className="text-2xl font-bold text-gray-900">{value}</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+          </div>
         ))}
       </div>
 
-      {/* Recent Users */}
-      <Card className="p-5">
-        <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-[var(--color-navy)]">Últimos cadastros</h2>
+      <div className="rounded-xl bg-white p-5 shadow-sm">
+        <h2 className="mb-4 text-sm font-bold text-gray-900 uppercase tracking-wide">Últimos cadastros</h2>
         <div className="space-y-2">
           {recentUsers.map((u) => (
-            <div key={u.id} className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] p-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-navy)] text-xs font-bold text-[var(--color-lime)]">
+            <div key={u.id} className="flex items-center gap-3 rounded-lg border border-gray-100 p-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gray-900 text-xs font-bold text-white">
                 {u.full_name?.charAt(0)?.toUpperCase() ?? 'U'}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{u.full_name || u.email}</p>
-                <p className="text-xs text-[var(--color-muted)]">{new Date(u.created_at).toLocaleDateString('pt-BR')}</p>
+                <p className="truncate text-sm font-semibold text-gray-900">{u.full_name || u.email}</p>
+                <p className="text-xs text-gray-400">{new Date(u.created_at).toLocaleDateString('pt-BR')}</p>
               </div>
               <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${statusBadge(u.status)}`}>
                 {u.status}
@@ -104,7 +101,7 @@ export default function AdminDashboardPage() {
             </div>
           ))}
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { Card } from '@/components/ui/card'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { DollarSign, AlertTriangle, CheckCircle, Clock } from 'lucide-react'
 
 interface Pagamento {
@@ -70,15 +69,27 @@ export default function AdminFinanceiroPage() {
 
   const inadimplentes = assinaturas.filter((s) => s.status === 'inadimplente')
 
+  const kpis = [
+    { icon: DollarSign, label: 'MRR', value: `R$ ${mrr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, bg: 'bg-green-50', iconColor: 'text-green-500' },
+    { icon: CheckCircle, label: 'Total Recebido', value: `R$ ${totalRecebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, bg: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { icon: Clock, label: 'Assinaturas', value: String(assinaturas.length), bg: 'bg-indigo-50', iconColor: 'text-indigo-500' },
+    { icon: AlertTriangle, label: 'Inadimplentes', value: String(inadimplentes.length), bg: 'bg-red-50', iconColor: 'text-red-500' },
+  ]
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-[var(--color-navy)]">Financeiro</h1>
+      <h1 className="text-2xl font-bold text-gray-900">Financeiro</h1>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <KPICard icon={DollarSign} label="MRR" value={`R$ ${mrr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} color="text-green-600" />
-        <KPICard icon={CheckCircle} label="Total Recebido" value={`R$ ${totalRecebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} color="text-blue-600" />
-        <KPICard icon={Clock} label="Assinaturas" value={String(assinaturas.length)} color="text-indigo-600" />
-        <KPICard icon={AlertTriangle} label="Inadimplentes" value={String(inadimplentes.length)} color="text-red-600" />
+        {kpis.map(({ icon: Icon, label, value, bg, iconColor }) => (
+          <div key={label} className="rounded-xl bg-white p-4 shadow-sm">
+            <div className={`mb-2 inline-flex rounded-lg p-2 ${bg}`}>
+              <Icon size={16} className={iconColor} />
+            </div>
+            <p className="text-xl font-bold text-gray-900">{value}</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+          </div>
+        ))}
       </div>
 
       <Tabs defaultValue="pagamentos">
@@ -90,57 +101,45 @@ export default function AdminFinanceiroPage() {
 
         <TabsContent value="pagamentos" className="mt-4 space-y-2">
           {pagamentos.map((p) => (
-            <Card key={p.id} className="flex items-center gap-3 p-3">
+            <div key={p.id} className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{p.profiles?.full_name ?? p.profiles?.email ?? '—'}</p>
-                <p className="text-xs text-[var(--color-muted)]">{new Date(p.created_at).toLocaleDateString('pt-BR')}</p>
+                <p className="truncate text-sm font-semibold text-gray-900">{p.profiles?.full_name ?? p.profiles?.email ?? '—'}</p>
+                <p className="text-xs text-gray-400">{new Date(p.created_at).toLocaleDateString('pt-BR')}</p>
               </div>
-              <span className="text-sm font-bold">R$ {Number(p.valor).toFixed(2)}</span>
+              <span className="text-sm font-bold text-gray-900">R$ {Number(p.valor).toFixed(2)}</span>
               <Badge className={statusColor[p.status] ?? 'bg-gray-100'}>{p.status}</Badge>
-            </Card>
+            </div>
           ))}
-          {pagamentos.length === 0 && <p className="py-8 text-center text-[var(--color-muted)]">Nenhum pagamento registrado.</p>}
+          {pagamentos.length === 0 && <p className="py-8 text-center text-gray-400">Nenhum pagamento registrado.</p>}
         </TabsContent>
 
         <TabsContent value="assinaturas" className="mt-4 space-y-2">
           {assinaturas.map((s) => (
-            <Card key={s.id} className="flex items-center gap-3 p-3">
+            <div key={s.id} className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{s.profiles?.full_name ?? s.profiles?.email ?? '—'}</p>
-                <p className="text-xs text-[var(--color-muted)]">R$ {Number(s.valor_mensal).toFixed(2)}/mês · {s.ciclo}</p>
+                <p className="truncate text-sm font-semibold text-gray-900">{s.profiles?.full_name ?? s.profiles?.email ?? '—'}</p>
+                <p className="text-xs text-gray-400">R$ {Number(s.valor_mensal).toFixed(2)}/mês · {s.ciclo}</p>
               </div>
               <Badge className={statusColor[s.status] ?? 'bg-gray-100'}>{s.status}</Badge>
-            </Card>
+            </div>
           ))}
-          {assinaturas.length === 0 && <p className="py-8 text-center text-[var(--color-muted)]">Nenhuma assinatura.</p>}
+          {assinaturas.length === 0 && <p className="py-8 text-center text-gray-400">Nenhuma assinatura.</p>}
         </TabsContent>
 
         <TabsContent value="inadimplencia" className="mt-4 space-y-2">
           {inadimplentes.map((s) => (
-            <Card key={s.id} className="flex items-center gap-3 border-red-200 p-3">
+            <div key={s.id} className="flex items-center gap-3 rounded-xl border border-red-100 bg-white p-3 shadow-sm">
               <AlertTriangle size={16} className="shrink-0 text-red-500" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{s.profiles?.full_name ?? s.profiles?.email ?? '—'}</p>
-                <p className="text-xs text-red-500">{s.tentativas_falha} tentativas falhadas</p>
+                <p className="truncate text-sm font-semibold text-gray-900">{s.profiles?.full_name ?? s.profiles?.email ?? '—'}</p>
+                <p className="text-xs text-red-400">{s.tentativas_falha} tentativas falhadas</p>
               </div>
-              <span className="text-sm font-bold">R$ {Number(s.valor_mensal).toFixed(2)}</span>
-            </Card>
+              <span className="text-sm font-bold text-gray-900">R$ {Number(s.valor_mensal).toFixed(2)}</span>
+            </div>
           ))}
-          {inadimplentes.length === 0 && <p className="py-8 text-center text-green-600 font-semibold">Nenhum inadimplente.</p>}
+          {inadimplentes.length === 0 && <p className="py-8 text-center text-gray-500 font-medium">Nenhum inadimplente.</p>}
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
-
-function KPICard({ icon: Icon, label, value, color }: { icon: typeof DollarSign; label: string; value: string; color: string }) {
-  return (
-    <Card className="p-4">
-      <div className="flex items-center gap-2">
-        <Icon size={16} className={color} />
-        <span className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">{label}</span>
-      </div>
-      <p className="mt-1 text-xl font-extrabold text-[var(--color-navy)]">{value}</p>
-    </Card>
   )
 }
