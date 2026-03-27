@@ -6,6 +6,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 }
 
+const PROFILE_FIELDS = "id, email, full_name, phone, propostas_count, simulacoes_count"
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders })
 
@@ -14,9 +16,12 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   )
 
-  const results = { processed: 0, sent: 0, skipped: 0, errors: 0 }
+  const results = { processed: 0, sent: 0, skipped: 0, errors: 0, whatsapp_sent: 0, email_sent: 0 }
 
   try {
+    // Buscar config UAZAPI do platform_settings
+    const uazapi = await getUazapiConfig(supabase)
+
     // Buscar campanhas ativas com trigger automático
     const { data: campanhas } = await supabase
       .from("campanhas")
@@ -25,9 +30,7 @@ serve(async (req) => {
       .neq("tipo_trigger", "manual")
 
     if (!campanhas || campanhas.length === 0) {
-      return new Response(JSON.stringify({ message: "Nenhuma campanha ativa", ...results }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      })
+      return jsonResponse({ message: "Nenhuma campanha ativa", ...results })
     }
 
     for (const campanha of campanhas) {
@@ -60,13 +63,14 @@ serve(async (req) => {
         if (canal === "whatsapp" && prefs && !prefs.whatsapp_opt_in) { results.skipped++; continue }
 
         // Preparar variáveis
+        const appUrl = Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".vercel.app") ?? ""
         const variables: Record<string, string> = {
           nome: user.full_name || "Corretor",
           email: user.email || "",
           propostas_count: String(user.propostas_count || 0),
           simulacoes_count: String(user.simulacoes_count || 0),
-          link_checkout: `${Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".vercel.app")}/app/checkout`,
-          link_app: `${Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".vercel.app")}/app`,
+          link_checkout: `${appUrl}/app/checkout`,
+          link_app: `${appUrl}/app`,
         }
 
         // Adicionar cupom se existir
@@ -96,13 +100,15 @@ serve(async (req) => {
                   variables,
                 },
               })
+              results.email_sent++
             }
           }
 
-          // Registrar envio WhatsApp (TODO: integrar UAZAPI)
-          if ((canal === "whatsapp" || canal === "ambos") && campanha.template_whatsapp) {
-            // Por enquanto só loga — integrar com UAZAPI depois
-            console.log(`[WA] ${user.full_name}: ${campanha.template_whatsapp.substring(0, 50)}...`)
+          // Enviar WhatsApp via UAZAPI
+          if ((canal === "whatsapp" || canal === "ambos") && campanha.template_whatsapp && user.phone) {
+            const message = replaceVariables(campanha.template_whatsapp, variables)
+            const sent = await sendWhatsApp(uazapi, user.phone, message)
+            if (sent) results.whatsapp_sent++
           }
 
           // Registrar envio
@@ -127,9 +133,7 @@ serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify(results), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    })
+    return jsonResponse(results)
   } catch (err) {
     return new Response(JSON.stringify({ error: (err as Error).message }), {
       status: 500,
@@ -138,27 +142,106 @@ serve(async (req) => {
   }
 })
 
+// ─── UAZAPI Integration ───
+
+interface UazapiConfig {
+  url: string
+  token: string
+}
+
+async function getUazapiConfig(supabase: ReturnType<typeof createClient>): Promise<UazapiConfig> {
+  const { data: urlSetting } = await supabase
+    .from("platform_settings")
+    .select("value")
+    .eq("key", "UAZAPI_URL")
+    .eq("is_active", true)
+    .single()
+
+  const { data: tokenSetting } = await supabase
+    .from("platform_settings")
+    .select("value")
+    .eq("key", "UAZAPI_TOKEN")
+    .eq("is_active", true)
+    .single()
+
+  return {
+    url: urlSetting?.value || "https://free.uazapi.com",
+    token: tokenSetting?.value || "",
+  }
+}
+
+async function sendWhatsApp(config: UazapiConfig, phone: string, text: string): Promise<boolean> {
+  if (!config.token) {
+    console.log(`[WA] Token UAZAPI não configurado. Mensagem para ${phone}: ${text.substring(0, 50)}...`)
+    return false
+  }
+
+  // Limpar telefone: remover +, espaços, parênteses, hífens
+  const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, "")
+  if (!cleanPhone || cleanPhone.length < 10) {
+    console.log(`[WA] Telefone inválido: ${phone}`)
+    return false
+  }
+
+  try {
+    const response = await fetch(`${config.url}/send/text`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "token": config.token,
+      },
+      body: JSON.stringify({
+        number: cleanPhone,
+        text,
+        delay: 2000, // 2s delay para simular digitação
+      }),
+    })
+
+    if (!response.ok) {
+      const error = await response.text()
+      console.error(`[WA] Erro UAZAPI ${response.status}: ${error}`)
+      return false
+    }
+
+    console.log(`[WA] Enviado para ${cleanPhone}`)
+    return true
+  } catch (err) {
+    console.error(`[WA] Falha ao enviar para ${cleanPhone}:`, err)
+    return false
+  }
+}
+
+function replaceVariables(template: string, variables: Record<string, string>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => variables[key] || `{{${key}}}`)
+}
+
+function jsonResponse(data: unknown) {
+  return new Response(JSON.stringify(data), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  })
+}
+
+// ─── Eligible Users Queries ───
+
 async function getEligibleUsers(supabase: ReturnType<typeof createClient>, trigger: string) {
   const now = new Date()
 
   switch (trigger) {
     case "boas_vindas": {
-      // Profiles criados nas últimas 2 horas
       const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString()
       const { data } = await supabase
         .from("profiles")
-        .select("id, email, full_name, propostas_count, simulacoes_count")
+        .select(PROFILE_FIELDS)
         .gte("created_at", twoHoursAgo)
         .eq("status", "trial")
       return data ?? []
     }
 
     case "trial_expirando": {
-      // Trial expira nas próximas 24h
       const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString()
       const { data } = await supabase
         .from("profiles")
-        .select("id, email, full_name, propostas_count, simulacoes_count")
+        .select(PROFILE_FIELDS)
         .eq("status", "trial")
         .gt("trial_ends_at", now.toISOString())
         .lte("trial_ends_at", tomorrow)
@@ -166,46 +249,42 @@ async function getEligibleUsers(supabase: ReturnType<typeof createClient>, trigg
     }
 
     case "trial_expirou": {
-      // Trial expirou (status ainda trial mas trial_ends_at no passado)
       const { data } = await supabase
         .from("profiles")
-        .select("id, email, full_name, propostas_count, simulacoes_count")
+        .select(PROFILE_FIELDS)
         .eq("status", "trial")
         .lt("trial_ends_at", now.toISOString())
       return data ?? []
     }
 
     case "inadimplente_3d": {
-      // Assinaturas com pagamento atrasado > 3 dias
       const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString()
       const { data: subs } = await supabase
         .from("assinaturas")
-        .select("user_id, profiles(id, email, full_name, propostas_count, simulacoes_count)")
+        .select(`user_id, profiles(${PROFILE_FIELDS})`)
         .eq("status", "inadimplente")
         .lt("data_proximo_pagamento", threeDaysAgo)
 
       return (subs ?? [])
         .map((s: { profiles: Record<string, unknown> | null }) => s.profiles)
-        .filter(Boolean) as Array<{ id: string; email: string; full_name: string; propostas_count: number; simulacoes_count: number }>
+        .filter(Boolean) as Array<{ id: string; email: string; full_name: string; phone: string | null; propostas_count: number; simulacoes_count: number }>
     }
 
     case "inativo_7d": {
-      // Usuários ativos que não atualizaram em 7 dias (sensor de inatividade)
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
       const { data } = await supabase
         .from("profiles")
-        .select("id, email, full_name, propostas_count, simulacoes_count")
+        .select(PROFILE_FIELDS)
         .in("status", ["ativo", "trial"])
         .lt("updated_at", sevenDaysAgo)
       return data ?? []
     }
 
     case "inativo_30d": {
-      // Usuários ativos que não atualizaram em 30 dias
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
       const { data } = await supabase
         .from("profiles")
-        .select("id, email, full_name, propostas_count, simulacoes_count")
+        .select(PROFILE_FIELDS)
         .eq("status", "ativo")
         .lt("updated_at", thirtyDaysAgo)
       return data ?? []
