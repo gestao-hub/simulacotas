@@ -77,7 +77,14 @@ export default function SimuladorSection() {
                     <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-[#0D1B4B]">Valor do Bem</label>
                     <div className="relative">
                       <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-semibold">R$</span>
-                      <Input type="number" value={valorBem} onChange={(e) => setValorBem(Number(e.target.value))}
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        value={valorBem.toLocaleString('pt-BR')}
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/\D/g, '')
+                          if (raw) setValorBem(Number(raw))
+                        }}
                         className="border-2 border-[#CCEE00] bg-[#F5FFCC] pl-9 font-bold text-[#0D1B4B] focus:ring-[#CCEE00]/30" />
                     </div>
                   </div>
