@@ -1,7 +1,7 @@
 {
   "name": "SimulaCotas",
   "short_name": "SimulaCotas",
-  "description": "Simulador de consórcio para corretores. Propostas profissionais em 30 segundos.",
+  "description": "Simulador de consórcio para consultores. Propostas profissionais em 30 segundos.",
   "start_url": "/app",
   "display": "standalone",
   "orientation": "portrait",

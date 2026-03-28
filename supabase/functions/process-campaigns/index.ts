@@ -65,7 +65,7 @@ serve(async (req) => {
         // Preparar variáveis
         const appUrl = "https://simulacotas.com.br"
         const variables: Record<string, string> = {
-          nome: user.full_name || "Corretor",
+          nome: user.full_name || "Consultor",
           email: user.email || "",
           propostas_count: String(user.propostas_count || 0),
           simulacoes_count: String(user.simulacoes_count || 0),
