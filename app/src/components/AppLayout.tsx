@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useTrialStatus } from '@/hooks/useTrialStatus'
 import TrialBanner from '@/components/trial/TrialBanner'
 import TrialExpiredModal from '@/components/trial/TrialExpiredModal'
-import { PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut, MessageSquare, Crown, Clock, Zap } from 'lucide-react'
+import { PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut, MessageSquare, Crown, Clock, Zap, FileText, TrendingUp } from 'lucide-react'
 
 const corretorLinks = [
   { to: '/app', icon: PlusCircle, label: 'Simulador' },
@@ -40,7 +40,7 @@ export default function AppLayout() {
             <img src="/assets/logo.png" alt="SimulaCotas" className="h-20 w-auto" />
           </div>
 
-          <nav className="flex-1 space-y-4 overflow-y-auto px-3 py-2">
+          <nav className="flex-1 space-y-3 overflow-y-auto px-3 py-2">
             <div className="space-y-1 rounded-2xl bg-white p-2 shadow-sm">
               {corretorLinks.map(({ to, icon: Icon, label }) => (
                 <NavLink
@@ -62,32 +62,28 @@ export default function AppLayout() {
             </div>
 
             {isAdmin && (
-              <>
-                <div className="space-y-1 rounded-2xl bg-white p-2 shadow-sm">
-                  {adminLinks.map(({ to, icon: Icon, label }) => (
-                    <NavLink
-                      key={to}
-                      to={to}
-                      end={to === '/app/admin'}
-                      className={({ isActive }) =>
-                        `group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                          isActive
-                            ? 'bg-[var(--color-navy)] text-white font-semibold shadow-sm'
-                            : 'text-gray-400 hover:bg-gray-50 hover:text-gray-700 hover:scale-[1.02]'
-                        }`
-                      }
-                    >
-                      <Icon size={18} />
-                      {label}
-                    </NavLink>
-                  ))}
-                </div>
-              </>
+              <div className="space-y-1 rounded-2xl bg-white p-2 shadow-sm">
+                {adminLinks.map(({ to, icon: Icon, label }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    end={to === '/app/admin'}
+                    className={({ isActive }) =>
+                      `group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                        isActive
+                          ? 'bg-[var(--color-navy)] text-white font-semibold shadow-sm'
+                          : 'text-gray-400 hover:bg-gray-50 hover:text-gray-700 hover:scale-[1.02]'
+                      }`
+                    }
+                  >
+                    <Icon size={18} />
+                    {label}
+                  </NavLink>
+                ))}
+              </div>
             )}
-          </nav>
 
-          {/* Card de assinatura */}
-          <div className="px-3 pb-2">
+            {/* Card de assinatura */}
             {trial.isPaidUser ? (
               <div className="rounded-2xl bg-gradient-to-br from-[var(--color-navy)] to-[var(--color-navy-light)] p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
@@ -136,7 +132,32 @@ export default function AppLayout() {
                 </button>
               </div>
             ) : null}
-          </div>
+
+            {/* Estatísticas rápidas */}
+            <div className="rounded-2xl bg-white p-4 shadow-sm">
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-wider text-gray-400">Suas Métricas</p>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50">
+                      <TrendingUp size={14} className="text-blue-500" />
+                    </div>
+                    <span className="text-xs text-gray-500">Simulações</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{profile?.simulacoes_count ?? 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-50">
+                      <FileText size={14} className="text-purple-500" />
+                    </div>
+                    <span className="text-xs text-gray-500">Propostas</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{profile?.propostas_count ?? 0}</span>
+                </div>
+              </div>
+            </div>
+          </nav>
 
           {/* Perfil + Logout */}
           <div className="px-3 pb-4">
