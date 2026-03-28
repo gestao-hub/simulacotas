@@ -76,7 +76,8 @@ export default function SimuladorPage() {
   }
 
   const handleGerarPDF = () => {
-    if (!sim.resumo || !selectedAdmin) return
+    if (!sim.resumo) { alert('Preencha os campos e aguarde o cálculo para gerar o PDF.'); return }
+    if (!selectedAdmin) { alert('Selecione uma administradora.'); return }
 
     const html = gerarHTMLProposta({
       corretorNome: profile?.full_name ?? '',
@@ -99,7 +100,7 @@ export default function SimuladorPage() {
   }
 
   const handleWhatsApp = () => {
-    if (!sim.resumo) return
+    if (!sim.resumo) { alert('Preencha os campos e aguarde o cálculo.'); return }
     salvarEGerar('whatsapp_text')
     const texto = [
       `*Simulação de Consórcio${selectedAdmin ? ` — ${selectedAdmin.nome}` : ''}*`,
