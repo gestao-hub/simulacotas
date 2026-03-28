@@ -5,7 +5,6 @@ import AppLayout from '@/components/AppLayout'
 
 import LandingPage from '@/pages/LandingPage'
 import AuthCallbackPage from '@/pages/AuthCallbackPage'
-import DashboardPage from '@/pages/DashboardPage'
 import SimuladorPage from '@/pages/SimuladorPage'
 import HistoricoPage from '@/pages/HistoricoPage'
 import ClientesPage from '@/pages/ClientesPage'
@@ -30,7 +29,7 @@ export default function App() {
 
           {/* Protected — App */}
           <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-            <Route index element={<DashboardPage />} />
+            <Route index element={<SimuladorPage />} />
             <Route path="simulador" element={<SimuladorPage />} />
             <Route path="historico" element={<HistoricoPage />} />
             <Route path="clientes" element={<ClientesPage />} />

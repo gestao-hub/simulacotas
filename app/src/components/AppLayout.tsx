@@ -3,11 +3,10 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useTrialStatus } from '@/hooks/useTrialStatus'
 import TrialBanner from '@/components/trial/TrialBanner'
 import TrialExpiredModal from '@/components/trial/TrialExpiredModal'
-import { Home, PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut, MessageSquare } from 'lucide-react'
+import { PlusCircle, History, Users, Settings, BarChart3, CreditCard, Megaphone, Database, Shield, LogOut, MessageSquare, Crown, Clock, Zap } from 'lucide-react'
 
 const corretorLinks = [
-  { to: '/app', icon: Home, label: 'Início' },
-  { to: '/app/simulador', icon: PlusCircle, label: 'Nova' },
+  { to: '/app', icon: PlusCircle, label: 'Simulador' },
   { to: '/app/historico', icon: History, label: 'Histórico' },
   { to: '/app/clientes', icon: Users, label: 'Clientes' },
   { to: '/app/config', icon: Settings, label: 'Config' },
@@ -87,6 +86,59 @@ export default function AppLayout() {
             )}
           </nav>
 
+          {/* Card de assinatura */}
+          <div className="px-3 pb-2">
+            {trial.isPaidUser ? (
+              <div className="rounded-2xl bg-gradient-to-br from-[var(--color-navy)] to-[var(--color-navy-light)] p-4 shadow-sm">
+                <div className="flex items-center gap-2 mb-3">
+                  <Crown size={16} className="text-[var(--color-lime)]" />
+                  <span className="text-xs font-bold text-[var(--color-lime)] uppercase tracking-wider">Plano Pro</span>
+                </div>
+                <p className="text-[11px] text-white/50">Simulações ilimitadas</p>
+                <p className="text-[11px] text-white/50">Todas as administradoras</p>
+                <p className="text-[11px] text-white/50">PDF + WhatsApp</p>
+              </div>
+            ) : trial.isTrialActive ? (
+              <div className="rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/50 p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} className="text-amber-600" />
+                    <span className="text-xs font-bold text-amber-700 uppercase tracking-wider">Trial Gratuito</span>
+                  </div>
+                  <span className="text-lg font-extrabold text-amber-600">{trial.daysRemaining}d</span>
+                </div>
+                <div className="mb-3">
+                  <div className="h-1.5 w-full rounded-full bg-amber-200/50">
+                    <div className="h-1.5 rounded-full bg-amber-500 transition-all" style={{ width: `${((3 - trial.daysRemaining) / 3) * 100}%` }} />
+                  </div>
+                  <p className="mt-1 text-[10px] text-amber-600/70">{trial.daysRemaining} {trial.daysRemaining === 1 ? 'dia restante' : 'dias restantes'}</p>
+                </div>
+                <button
+                  onClick={() => navigate('/app/checkout')}
+                  className="w-full rounded-xl bg-[var(--color-navy)] py-2 text-xs font-bold text-white transition-all hover:bg-[var(--color-navy-light)] hover:scale-[1.02]"
+                >
+                  <Zap size={12} className="mr-1 inline" />
+                  Assinar agora
+                </button>
+              </div>
+            ) : trial.isTrialExpired ? (
+              <div className="rounded-2xl bg-gradient-to-br from-red-50 to-rose-50 border border-red-200/50 p-4 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock size={16} className="text-red-500" />
+                  <span className="text-xs font-bold text-red-600 uppercase tracking-wider">Trial Expirado</span>
+                </div>
+                <p className="text-[11px] text-red-600/70 mb-3">Seu período de teste acabou. Assine para continuar usando.</p>
+                <button
+                  onClick={() => navigate('/app/checkout')}
+                  className="w-full rounded-xl bg-red-500 py-2 text-xs font-bold text-white transition-all hover:bg-red-600 hover:scale-[1.02]"
+                >
+                  Assinar agora
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Perfil + Logout */}
           <div className="px-3 pb-4">
             <div className="rounded-2xl bg-white p-3 shadow-sm">
               <div className="flex items-center gap-3">
@@ -97,20 +149,6 @@ export default function AppLayout() {
                   <p className="truncate text-sm font-semibold text-gray-900">{profile?.full_name ?? 'Consultor'}</p>
                   <p className="truncate text-xs text-gray-400">{profile?.email}</p>
                 </div>
-              </div>
-              <div className="mt-3 flex items-center justify-between">
-                {trial.isPaidUser && (
-                  <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-[10px] font-bold text-green-600">Pro</span>
-                )}
-                {trial.isTrialActive && (
-                  <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-600">
-                    Trial · {trial.daysRemaining}d
-                  </span>
-                )}
-                {trial.isTrialExpired && (
-                  <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-500">Expirado</span>
-                )}
-                {!trial.isPaidUser && !trial.isTrialActive && !trial.isTrialExpired && <span />}
                 <button
                   onClick={handleSignOut}
                   className="rounded-lg p-1.5 text-gray-300 transition-colors hover:bg-gray-50 hover:text-gray-500"
