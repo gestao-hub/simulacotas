@@ -135,7 +135,7 @@ export default function CheckoutPage() {
           <CardContent className="flex items-center gap-3 p-4">
             <Building2 size={20} className="text-indigo-600" />
             <p className="text-sm font-semibold text-indigo-800">
-              Desconto de empresa aplicado automaticamente (10% por corretor)
+              Desconto de empresa aplicado automaticamente (10% por consultor)
             </p>
           </CardContent>
         </Card>

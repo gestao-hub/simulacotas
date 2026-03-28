@@ -4,7 +4,7 @@ import { FileSpreadsheet, Clock, Smartphone } from 'lucide-react'
 
 const problems = [
   { icon: FileSpreadsheet, title: 'Planilhas que quebram', desc: 'Erros #DIV/0!, fórmulas frágeis, cada administradora com uma planilha diferente.', num: '01' },
-  { icon: Clock, title: 'Tempo desperdiçado', desc: 'Corretores gastam 10+ minutos montando propostas que deveriam levar 30 segundos.', num: '02' },
+  { icon: Clock, title: 'Tempo desperdiçado', desc: 'Consultores gastam 10+ minutos montando propostas que deveriam levar 30 segundos.', num: '02' },
   { icon: Smartphone, title: 'Sem uso no celular', desc: 'Impossível abrir planilha Excel no celular para simular na frente do cliente.', num: '03' },
 ]
 
@@ -19,7 +19,7 @@ export default function ProblemSection() {
             Cansado de <span className="text-red-500">planilhas</span>?
           </h2>
           <p className="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
-            Corretores de consórcio enfrentam esses problemas todos os dias.
+            Consultores de consórcio enfrentam esses problemas todos os dias.
           </p>
         </motion.div>
 

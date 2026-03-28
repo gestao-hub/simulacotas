@@ -7,7 +7,7 @@ const faqs = [
   { q: 'Precisa instalar alguma coisa?', a: 'Não. Funciona 100% no navegador. Opcionalmente, você pode adicionar à tela inicial do celular para usar como app nativo.' },
   { q: 'E se eu quiser cancelar?', a: 'Cancele a qualquer momento, sem multa. Seu acesso continua até o final do período pago. Dados preservados por 90 dias.' },
   { q: 'Funciona com qual administradora?', a: 'Itaú, Banco do Brasil, Santander, Magalu, Reconomia, Breitkopf e Âncora. Novas administradoras são adicionadas regularmente.' },
-  { q: 'Os cálculos são confiáveis?', a: 'Sim. As fórmulas foram extraídas das planilhas oficiais do BB e Itaú e validadas com corretores reais do mercado.' },
+  { q: 'Os cálculos são confiáveis?', a: 'Sim. As fórmulas foram extraídas das planilhas oficiais do BB e Itaú e validadas com consultores reais do mercado.' },
   { q: 'Posso personalizar com minha marca?', a: 'Sim. Configure seu nome, logo, WhatsApp e cores. Toda proposta em PDF sai com sua identidade visual completa.' },
 ]
 

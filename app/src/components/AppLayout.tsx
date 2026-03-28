@@ -94,7 +94,7 @@ export default function AppLayout() {
                   {profile?.full_name?.charAt(0)?.toUpperCase() ?? 'C'}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-gray-900">{profile?.full_name ?? 'Corretor'}</p>
+                  <p className="truncate text-sm font-semibold text-gray-900">{profile?.full_name ?? 'Consultor'}</p>
                   <p className="truncate text-xs text-gray-400">{profile?.email}</p>
                 </div>
               </div>

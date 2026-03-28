@@ -3,9 +3,9 @@ import { blurFadeUp, staggerContainer } from '@/lib/animations'
 import { Star } from 'lucide-react'
 
 const testimonials = [
-  { name: 'Carlos S.', role: 'Corretor de Imóveis — SP', text: 'Antes eu levava 10 minutos com planilha. Agora faço em 30 segundos e mando pelo WhatsApp. O cliente recebe um PDF profissional.', avatar: 'C' },
+  { name: 'Carlos S.', role: 'Consultor de Consórcio — SP', text: 'Antes eu levava 10 minutos com planilha. Agora faço em 30 segundos e mando pelo WhatsApp. O cliente recebe um PDF profissional.', avatar: 'C' },
   { name: 'Ana M.', role: 'Representante Comercial — SC', text: 'A proposta em PDF com meu logo mudou o jogo. Os clientes levam a sério quando veem algo profissional.', avatar: 'A' },
-  { name: 'Roberto F.', role: 'Corretor Independente — RJ', text: 'Trabalho com 5 administradoras e o SimulaCotas tem todas. Não preciso mais abrir planilha diferente pra cada uma.', avatar: 'R' },
+  { name: 'Roberto F.', role: 'Consultor Independente — RJ', text: 'Trabalho com 5 administradoras e o SimulaCotas tem todas. Não preciso mais abrir planilha diferente pra cada uma.', avatar: 'R' },
   { name: 'Juliana P.', role: 'Equipe de Vendas — MG', text: 'Uso direto no celular nas reuniões com clientes. Simulo na hora e já envio a proposta. Minha conversão aumentou muito.', avatar: 'J' },
 ]
 
@@ -16,7 +16,7 @@ export default function TestimonialsSection() {
       <div className="gradient-blob gradient-blob-navy w-[400px] h-[400px] -right-48 top-0 opacity-15 animate-float-slow" />
       <div className="mx-auto max-w-6xl px-6 relative z-10">
         <motion.div variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">O que corretores dizem</h2>
+          <h2 className="text-3xl font-extrabold text-[#0D1B4B] sm:text-4xl">O que consultores dizem</h2>
         </motion.div>
 
         <motion.div

@@ -19,7 +19,7 @@ const plans = [
   {
     name: 'Pro',
     icon: Rocket,
-    description: 'Tudo ilimitado. O plano mais escolhido por corretores ativos.',
+    description: 'Tudo ilimitado. O plano mais escolhido por consultores ativos.',
     price: '189',
     priceCents: ',90',
     period: '/mês',
@@ -31,14 +31,14 @@ const plans = [
   {
     name: 'Empresa',
     icon: Building2,
-    description: '10+ corretores com desconto progressivo. Gestão centralizada.',
+    description: '10+ consultores com desconto progressivo. Gestão centralizada.',
     price: '170',
     priceCents: ',91',
-    period: '/corretor/mês',
+    period: '/consultor/mês',
     features: [
       ...featuresAll,
       'Painel admin da empresa',
-      'Desconto 10% por corretor',
+      'Desconto 10% por consultor',
     ],
     buttonText: 'Falar com Vendas',
     isPopular: false,
@@ -135,7 +135,7 @@ export default function PricingSection() {
         </motion.div>
 
         <motion.p variants={blurFadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mt-8 text-xs text-gray-400">
-          Sem cartão para o trial. Empresa com 20+ corretores: desconto composto (19% off). 50+: sob consulta.
+          Sem cartão para o trial. Empresa com 20+ consultores: desconto composto (19% off). 50+: sob consulta.
         </motion.p>
       </div>
     </section>

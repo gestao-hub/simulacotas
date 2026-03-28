@@ -48,7 +48,7 @@ export default function AdminDashboardPage() {
   }, [])
 
   const cards = kpis ? [
-    { label: 'Corretores', value: kpis.total_corretores, icon: Users, bg: 'bg-blue-50', iconColor: 'text-blue-500' },
+    { label: 'Consultores', value: kpis.total_corretores, icon: Users, bg: 'bg-blue-50', iconColor: 'text-blue-500' },
     { label: 'Ativos', value: kpis.corretores_ativos, icon: TrendingUp, bg: 'bg-green-50', iconColor: 'text-green-500' },
     { label: 'Trial', value: kpis.corretores_trial, icon: UserPlus, bg: 'bg-amber-50', iconColor: 'text-amber-500' },
     { label: 'Inadimplentes', value: kpis.corretores_inadimplentes, icon: AlertTriangle, bg: 'bg-red-50', iconColor: 'text-red-500' },

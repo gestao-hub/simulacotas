@@ -8,7 +8,7 @@ export default function DashboardPage() {
   const trial = useTrialStatus()
   const navigate = useNavigate()
 
-  const firstName = profile?.full_name?.split(' ')[0] || 'Corretor'
+  const firstName = profile?.full_name?.split(' ')[0] || 'Consultor'
 
   const stats = [
     { icon: BarChart3, label: 'Simulações', value: profile?.simulacoes_count ?? 0, color: 'bg-blue-50 text-blue-500' },

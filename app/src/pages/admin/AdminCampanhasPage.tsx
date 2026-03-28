@@ -241,7 +241,7 @@ export default function AdminCampanhasPage() {
           <div className="space-y-4">
             <div>
               <Label className="text-gray-700">Nome da campanha</Label>
-              <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Boas-vindas novos corretores" className="rounded-xl bg-gray-50 border-gray-200" />
+              <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Boas-vindas novos consultores" className="rounded-xl bg-gray-50 border-gray-200" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">

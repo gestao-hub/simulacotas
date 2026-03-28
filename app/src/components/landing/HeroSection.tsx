@@ -35,7 +35,7 @@ export default function HeroSection() {
 
             <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-gray-500">
               Simulador multi-administradora com geração de PDF e envio por WhatsApp.
-              Para corretores que querem vender mais, não gerenciar planilhas.
+              Para consultores que querem vender mais, não gerenciar planilhas.
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
