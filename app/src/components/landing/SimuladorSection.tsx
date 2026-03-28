@@ -72,11 +72,11 @@ export default function SimuladorSection() {
                 </div>
 
                 {/* Inputs */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   <div>
                     <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-[#0D1B4B]">Valor do Bem</label>
                     <div className="relative">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-semibold">R$</span>
+                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 font-semibold">R$</span>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -85,7 +85,7 @@ export default function SimuladorSection() {
                           const raw = e.target.value.replace(/\D/g, '')
                           if (raw) setValorBem(Number(raw))
                         }}
-                        className="border-2 border-[#CCEE00] bg-[#F5FFCC] pl-9 font-bold text-[#0D1B4B] focus:ring-[#CCEE00]/30" />
+                        className="border-2 border-[#CCEE00] bg-[#F5FFCC] pl-8 font-bold text-[#0D1B4B] focus:ring-[#CCEE00]/30" />
                     </div>
                   </div>
                   <div>
