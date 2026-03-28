@@ -81,6 +81,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         fetchRole(session.user.id)
       }
       setLoading(false)
+    }).catch(() => {
+      setLoading(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -92,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setProfile(null)
         setRole(null)
       }
+      setLoading(false)
     })
 
     return () => subscription.unsubscribe()
