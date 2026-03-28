@@ -33,7 +33,10 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(
       authHeader.replace("Bearer ", "")
     )
-    if (authError || !user) throw new Error("Token inválido")
+    if (authError || !user) {
+      console.error("Auth error:", authError?.message)
+      throw new Error("Sessão expirada. Faça login novamente.")
+    }
 
     const { ciclo, coupon_code }: RequestBody = await req.json()
 
@@ -97,8 +100,8 @@ serve(async (req) => {
           }],
           payer: { email: user.email },
           back_urls: {
-            success: `${Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".app")}/app?payment=success`,
-            failure: `${Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".app")}/app?payment=failure`,
+            success: `https://simulacotas.com.br/app?payment=success`,
+            failure: `https://simulacotas.com.br/app?payment=failure`,
           },
           auto_return: "approved",
           external_reference: user.id,
@@ -153,7 +156,7 @@ serve(async (req) => {
             },
           },
           payer_email: user.email,
-          back_url: `${Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", ".app")}/app`,
+          back_url: `https://simulacotas.com.br/app`,
           external_reference: user.id,
           notification_url: `${Deno.env.get("SUPABASE_URL")}/functions/v1/mp-webhook`,
           status: "pending",
