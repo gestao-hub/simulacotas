@@ -1,6 +1,3 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/contexts/AuthContext'
 import { GlassFilter } from '@/components/ui/liquid-glass'
 import LandingHeader from '@/components/landing/LandingHeader'
 import HeroSection from '@/components/landing/HeroSection'
@@ -18,15 +15,6 @@ import LandingFooter from '@/components/landing/LandingFooter'
 import AuthModal from '@/components/auth/AuthModal'
 
 export default function LandingPage() {
-  const { session, loading } = useAuth()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (!loading && session) {
-      navigate('/app', { replace: true })
-    }
-  }, [session, loading, navigate])
-
   return (
     <div className="min-h-screen overflow-hidden bg-[#f8f9fa]">
       <GlassFilter />

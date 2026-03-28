@@ -4,6 +4,7 @@ import { ProtectedRoute, AdminRoute } from '@/components/ProtectedRoute'
 import AppLayout from '@/components/AppLayout'
 
 import LandingPage from '@/pages/LandingPage'
+import AuthCallbackPage from '@/pages/AuthCallbackPage'
 import DashboardPage from '@/pages/DashboardPage'
 import SimuladorPage from '@/pages/SimuladorPage'
 import HistoricoPage from '@/pages/HistoricoPage'
@@ -24,6 +25,7 @@ export default function App() {
         <Routes>
           {/* Public */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/login" element={<Navigate to="/?auth=login" replace />} />
 
           {/* Protected — App */}
