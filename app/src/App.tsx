@@ -10,6 +10,7 @@ import HistoricoPage from '@/pages/HistoricoPage'
 import ClientesPage from '@/pages/ClientesPage'
 import ConfigPage from '@/pages/ConfigPage'
 import CheckoutPage from '@/pages/CheckoutPage'
+import AssinaturaPage from '@/pages/AssinaturaPage'
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage'
 import AdminFinanceiroPage from '@/pages/admin/AdminFinanceiroPage'
 import AdminCampanhasPage from '@/pages/admin/AdminCampanhasPage'
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="historico" element={<HistoricoPage />} />
             <Route path="clientes" element={<ClientesPage />} />
             <Route path="config" element={<ConfigPage />} />
+            <Route path="assinatura" element={<AssinaturaPage />} />
             <Route path="checkout" element={<CheckoutPage />} />
 
             {/* Admin */}

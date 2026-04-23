@@ -46,16 +46,14 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
 
-  // Carregar login salvo do localStorage
+  // Carregar email salvo (apenas email, nunca senha)
   useEffect(() => {
-    const saved = localStorage.getItem('sc_remember_login')
-    if (saved) {
-      try {
-        const { email: e, password: p } = JSON.parse(atob(saved))
-        setEmail(e)
-        setPassword(p)
-        setRememberMe(true)
-      } catch { /* ignore */ }
+    // Limpar formato antigo inseguro que salvava senha
+    localStorage.removeItem('sc_remember_login')
+    const savedEmail = localStorage.getItem('sc_remember_email')
+    if (savedEmail) {
+      setEmail(savedEmail)
+      setRememberMe(true)
     }
   }, [])
 
@@ -102,12 +100,12 @@ export default function AuthForm({ defaultMode = 'login', onSuccess }: AuthFormP
       if (error) { setError(error.message); setLoading(false); return }
     }
 
-    // Salvar ou limpar login no localStorage
+    // Salvar ou limpar email no localStorage (nunca senha)
     if (!isRegister) {
       if (rememberMe) {
-        localStorage.setItem('sc_remember_login', btoa(JSON.stringify({ email, password })))
+        localStorage.setItem('sc_remember_email', email)
       } else {
-        localStorage.removeItem('sc_remember_login')
+        localStorage.removeItem('sc_remember_email')
       }
     }
 

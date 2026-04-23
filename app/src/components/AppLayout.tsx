@@ -9,6 +9,7 @@ const corretorLinks = [
   { to: '/app', icon: PlusCircle, label: 'Simulador' },
   { to: '/app/historico', icon: History, label: 'Histórico' },
   { to: '/app/clientes', icon: Users, label: 'Clientes' },
+  { to: '/app/assinatura', icon: CreditCard, label: 'Assinatura' },
   { to: '/app/config', icon: Settings, label: 'Config' },
 ]
 

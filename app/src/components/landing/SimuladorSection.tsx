@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Lock } from 'lucide-react'
 import { calcularLinear, formatBRL } from '@/hooks/useSimulador'
 import { blurFadeUp } from '@/lib/animations'
 import SpotlightCard from '@/components/ui/spotlight-card'
@@ -28,13 +29,16 @@ export default function SimuladorSection() {
     lance_percentual: lance, lance_embutido_percentual: 0.3,
   }), [valorBem, prazo, lance, admin])
 
-  const items = [
-    { label: 'Carta de Crédito', value: formatBRL(resultado.valor_total) },
+  const visibleItems = [
     { label: 'Parcela Inicial', value: formatBRL(resultado.parcela_base) },
-    { label: 'Pós-Lance', value: formatBRL(resultado.parcela_pos_lance) },
-    { label: 'Crédito Líquido', value: formatBRL(resultado.credito_liquido) },
-    { label: 'Recursos Próprios', value: formatBRL(resultado.lance_recursos_proprios) },
     { label: 'Prazo', value: `${prazo} meses` },
+  ]
+
+  const lockedItems = [
+    { label: 'Carta de Crédito' },
+    { label: 'Pós-Lance' },
+    { label: 'Crédito Líquido' },
+    { label: 'Recursos Próprios' },
   ]
 
   return (
@@ -85,7 +89,7 @@ export default function SimuladorSection() {
                           const raw = e.target.value.replace(/\D/g, '')
                           if (raw) setValorBem(Number(raw))
                         }}
-                        className="border-2 border-[#CCEE00] bg-[#F5FFCC] pl-8 font-bold text-[#0D1B4B] focus:ring-[#CCEE00]/30" />
+                        className="border-2 border-[#CCEE00] bg-[#F5FFCC] pl-8 text-sm font-semibold text-[#0D1B4B] focus:ring-[#CCEE00]/30" />
                     </div>
                   </div>
                   <div>
@@ -108,16 +112,27 @@ export default function SimuladorSection() {
                   <span className="text-xs font-bold uppercase tracking-widest text-[#CCEE00]">Resultado</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {items.map(({ label, value }) => (
+                  {visibleItems.map(({ label, value }) => (
                     <div key={label} className="rounded-xl border-l-[3px] border-[#CCEE00] bg-white/[0.07] px-3 py-3 transition-all hover:bg-white/[0.12]">
                       <p className="text-[9px] font-bold uppercase tracking-wide text-white/50">{label}</p>
                       <p className="mt-1 text-sm font-extrabold text-white">{value}</p>
                     </div>
                   ))}
+                  {lockedItems.map(({ label }) => (
+                    <button
+                      key={label}
+                      onClick={() => setSearchParams({ auth: 'register' })}
+                      className="group relative rounded-xl border-l-[3px] border-white/20 bg-white/[0.04] px-3 py-3 text-left transition-all hover:bg-white/[0.10] hover:border-[#CCEE00]/50"
+                    >
+                      <p className="text-[9px] font-bold uppercase tracking-wide text-white/30">{label}</p>
+                      <p className="mt-1 text-sm font-extrabold text-white/20 blur-[6px] select-none">R$ 00.000,00</p>
+                      <Lock className="absolute right-2 top-2 h-3.5 w-3.5 text-white/25 group-hover:text-[#CCEE00]/60 transition-colors" />
+                    </button>
+                  ))}
                 </div>
 
                 <div className="mt-5 rounded-xl bg-white/10 backdrop-blur-sm p-4 text-center border border-white/10">
-                  <p className="text-sm font-semibold text-white/70">Quer gerar PDF e enviar pelo WhatsApp?</p>
+                  <p className="text-sm font-semibold text-white/70">Desbloqueie todos os dados + PDF + WhatsApp</p>
                   <Button onClick={() => setSearchParams({ auth: 'register' })} className="mt-3 bg-[#CCEE00] font-bold text-[#0D1B4B] hover:bg-[#AACC00] shadow-lg glow-lime-sm">
                     Criar Conta Grátis
                   </Button>

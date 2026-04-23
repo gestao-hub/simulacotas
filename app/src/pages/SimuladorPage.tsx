@@ -11,6 +11,9 @@ import PropostaPreview from '@/components/simulador/PropostaPreview'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { useTrialStatus } from '@/hooks/useTrialStatus'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { CheckCircle } from 'lucide-react'
 
 const planoLabels: Record<PlanoTipo, string> = {
   linear: 'Linear',
@@ -21,11 +24,71 @@ const planoLabels: Record<PlanoTipo, string> = {
 export default function SimuladorPage() {
   const sim = useSimulador()
   const { user, profile } = useAuth()
+  const { hasAccess, isBlocked, showExpiredGate } = useTrialStatus()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
   const [administradoras, setAdministradoras] = useState<Administradora[]>([])
   const [selectedAdmin, setSelectedAdmin] = useState<Administradora | null>(null)
   const [salvando, setSalvando] = useState(false)
   const [previewHtml, setPreviewHtml] = useState('')
   const [previewOpen, setPreviewOpen] = useState(false)
+
+  // Detectar redirect de pagamento bem sucedido
+  useEffect(() => {
+    if (searchParams.get('payment') === 'success') {
+      setShowPaymentSuccess(true)
+      setSearchParams({}, { replace: true }) // limpar query string
+      const timer = setTimeout(() => setShowPaymentSuccess(false), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams, setSearchParams])
+
+  // Tela de sucesso após pagamento
+  if (showPaymentSuccess) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 animate-in zoom-in duration-500">
+            <CheckCircle className="h-10 w-10 text-green-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-[var(--color-navy)]">Assinatura ativada!</h2>
+          <p className="text-sm text-gray-500 max-w-xs">
+            Seu plano Pro está ativo. Aproveite simulações ilimitadas, PDF com seu branding e envio por WhatsApp.
+          </p>
+          <button
+            onClick={() => setShowPaymentSuccess(false)}
+            className="mt-2 rounded-lg bg-[var(--color-navy)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--color-navy-light)] transition-all"
+          >
+            Começar a simular
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Bloquear acesso se trial expirado ou inadimplente
+  if (!hasAccess || isBlocked || showExpiredGate) {
+    return (
+      <div className="mx-auto max-w-md text-center py-20 space-y-4">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+          <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-6V4" /></svg>
+        </div>
+        <h2 className="text-xl font-bold text-gray-900">Acesso bloqueado</h2>
+        <p className="text-sm text-gray-500">
+          {isBlocked
+            ? 'Sua assinatura está suspensa. Regularize para continuar usando.'
+            : 'Seu período de teste terminou. Assine para continuar gerando simulações.'}
+        </p>
+        <button
+          onClick={() => navigate('/app/checkout')}
+          className="rounded-lg bg-[var(--color-navy)] px-6 py-3 text-sm font-bold text-white hover:bg-[var(--color-navy-light)] transition-all"
+        >
+          Ver planos e assinar
+        </button>
+      </div>
+    )
+  }
 
   useEffect(() => {
     supabase

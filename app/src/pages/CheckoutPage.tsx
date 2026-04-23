@@ -6,14 +6,23 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Check, Zap, Building2, Tag } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
+import { Check, Zap, Building2, Tag, QrCode, CreditCard, FileText, MapPin, User } from 'lucide-react'
+import { LumaSpin } from '@/components/ui/luma-spin'
 
 type Ciclo = 'mensal' | 'anual' | 'anual_vista'
+type BillingType = 'PIX' | 'CREDIT_CARD' | 'BOLETO'
 
-const planos: { ciclo: Ciclo; label: string; preco: string; precoCheio?: string; badge?: string; destaque: boolean }[] = [
-  { ciclo: 'mensal', label: 'Mensal', preco: 'R$ 189,90/mês', destaque: false },
-  { ciclo: 'anual', label: 'Anual', preco: 'R$ 159,90/mês', precoCheio: 'R$ 189,90', badge: '16% OFF', destaque: true },
-  { ciclo: 'anual_vista', label: 'Anual à vista', preco: 'R$ 1.798,80', precoCheio: 'R$ 2.278,80', badge: '21% OFF', destaque: false },
+const planos: { ciclo: Ciclo; label: string; preco: string; detalhe: string; precoCheio?: string; badge?: string; destaque: boolean }[] = [
+  { ciclo: 'mensal', label: 'Mensal', preco: 'R$ 189,90/mês', detalhe: 'Sem compromisso', destaque: false },
+  { ciclo: 'anual', label: 'Anual', preco: 'R$ 159,90/mês', detalhe: '12 parcelas mensais', precoCheio: 'R$ 189,90', badge: '16% OFF', destaque: true },
+  { ciclo: 'anual_vista', label: 'Anual à vista', preco: 'R$ 1.798,80', detalhe: 'Pagamento único', precoCheio: 'R$ 2.278,80', badge: '21% OFF', destaque: false },
+]
+
+const metodos: { type: BillingType; label: string; icon: typeof QrCode; desc: string }[] = [
+  { type: 'PIX', label: 'PIX', icon: QrCode, desc: 'Aprovação instantânea' },
+  { type: 'CREDIT_CARD', label: 'Cartão', icon: CreditCard, desc: 'Débito automático' },
+  { type: 'BOLETO', label: 'Boleto', icon: FileText, desc: 'Vence em 3 dias' },
 ]
 
 const features = [
@@ -30,9 +39,19 @@ const features = [
 export default function CheckoutPage() {
   const { user, profile } = useAuth()
   const [ciclo, setCiclo] = useState<Ciclo>('anual')
+  const [billingType, setBillingType] = useState<BillingType>('PIX')
   const [cupom, setCupom] = useState('')
   const [cupomValido, setCupomValido] = useState<{ valid: boolean; desconto: number; mensagem: string } | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // Campos de cartão
+  const [cardName, setCardName] = useState('')
+  const [cardNumber, setCardNumber] = useState('')
+  const [cardExpiry, setCardExpiry] = useState('')
+  const [cardCvv, setCardCvv] = useState('')
+  const [cardCpf, setCardCpf] = useState('')
+  const [cardCep, setCardCep] = useState('')
+  const [cardPhone, setCardPhone] = useState('')
 
   const validarCupom = async () => {
     if (!cupom.trim()) return
@@ -47,24 +66,88 @@ export default function CheckoutPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.functions.invoke('mp-create-subscription', {
-        body: {
-          ciclo,
-          coupon_code: cupomValido?.valid ? cupom.trim().toUpperCase() : undefined,
-        },
-      })
+      const body: Record<string, unknown> = {
+        ciclo,
+        billing_type: billingType,
+        coupon_code: cupomValido?.valid ? cupom.trim().toUpperCase() : undefined,
+      }
 
-      if (error) throw error
+      if (billingType === 'CREDIT_CARD') {
+        const cleanCard = cardNumber.replace(/\s/g, '')
+        const cleanCpf = cardCpf.replace(/\D/g, '')
+        const cleanCep = cardCep.replace(/\D/g, '')
 
-      await trackEvent('checkout_iniciado', { ciclo, cupom: cupom || null })
+        if (!cardName || !cleanCard || !cardExpiry || !cardCvv || !cleanCpf || !cleanCep) {
+          alert('Preencha todos os dados do cartão.')
+          setLoading(false)
+          return
+        }
+        if (cleanCard.length < 13 || cleanCard.length > 19) {
+          alert('Número do cartão inválido.')
+          setLoading(false)
+          return
+        }
+        if (!/^\d{2}\/\d{2,4}$/.test(cardExpiry.trim())) {
+          alert('Validade deve estar no formato MM/AA.')
+          setLoading(false)
+          return
+        }
+        if (cardCvv.length < 3 || cardCvv.length > 4) {
+          alert('CVV inválido.')
+          setLoading(false)
+          return
+        }
+        if (cleanCpf.length !== 11 && cleanCpf.length !== 14) {
+          alert('CPF/CNPJ inválido.')
+          setLoading(false)
+          return
+        }
+        if (cleanCep.length !== 8) {
+          alert('CEP inválido.')
+          setLoading(false)
+          return
+        }
+        const [expiryMonth, expiryYear] = cardExpiry.split('/')
+        body.credit_card = {
+          holderName: cardName,
+          number: cardNumber.replace(/\s/g, ''),
+          expiryMonth: expiryMonth.trim(),
+          expiryYear: expiryYear?.trim().length === 2 ? `20${expiryYear.trim()}` : expiryYear?.trim(),
+          ccv: cardCvv,
+        }
+        body.credit_card_holder_info = {
+          name: cardName,
+          email: user.email,
+          cpfCnpj: cardCpf.replace(/\D/g, ''),
+          postalCode: cardCep.replace(/\D/g, ''),
+          phone: cardPhone.replace(/\D/g, ''),
+        }
+      }
 
-      // Redirecionar para checkout do Mercado Pago
-      if (data?.checkout_url) {
-        window.location.href = data.checkout_url
+      const { data, error } = await supabase.functions.invoke('asaas-create-subscription', { body })
+      if (error) {
+        // Tentar extrair mensagem de erro do body da resposta
+        const errMsg = typeof data === 'object' && data?.error ? data.error : error.message || String(error)
+        throw new Error(errMsg)
+      }
+      if (data?.error) throw new Error(data.error)
+
+      await trackEvent('checkout_iniciado', { ciclo, metodo: billingType, cupom: cupom || null })
+
+      if (billingType === 'CREDIT_CARD') {
+        // Cartão cobra automaticamente, redirecionar direto
+        window.location.href = '/app?payment=success'
+      } else if (data?.payment_url) {
+        // PIX ou Boleto: redirecionar para página de pagamento Asaas
+        window.location.href = data.payment_url
+      } else {
+        // Fallback
+        alert('Assinatura criada! Verifique seu e-mail para instruções de pagamento.')
+        window.location.href = '/app?payment=pending'
       }
     } catch (err) {
       console.error('Erro no checkout:', err)
-      alert('Erro ao processar. Tente novamente.')
+      alert(`Erro ao processar: ${(err as Error).message || 'Tente novamente.'}`)
     } finally {
       setLoading(false)
     }
@@ -75,6 +158,16 @@ export default function CheckoutPage() {
     : 0
 
   return (
+    <>
+      {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <LumaSpin />
+          <p className="mt-6 text-sm font-semibold text-[var(--color-navy)]">
+            {billingType === 'CREDIT_CARD' ? 'Processando pagamento...' : 'Gerando sua cobrança...'}
+          </p>
+          <p className="mt-1 text-xs text-gray-400">Você será redirecionado em instantes</p>
+        </div>
+      )}
     <div className="mx-auto max-w-3xl space-y-6">
       <div className="text-center">
         <h1 className="text-2xl font-bold text-[var(--color-navy)]">Assine o SimulaCotas Pro</h1>
@@ -119,6 +212,7 @@ export default function CheckoutPage() {
               {p.precoCheio && (
                 <p className="text-xs text-[var(--color-muted)] line-through">{p.precoCheio}</p>
               )}
+              <p className="mt-0.5 text-[10px] text-gray-400">{p.detalhe}</p>
               {ciclo === p.ciclo && (
                 <div className="mt-2 flex justify-center">
                   <Check size={20} className="text-[var(--color-lime-dark)]" />
@@ -128,6 +222,76 @@ export default function CheckoutPage() {
           </Card>
         ))}
       </div>
+
+      {/* Método de pagamento */}
+      <div>
+        <p className="mb-2 text-sm font-bold text-[var(--color-navy)]">Forma de pagamento</p>
+        <div className="grid grid-cols-3 gap-3">
+          {metodos.map((m) => (
+            <button
+              key={m.type}
+              onClick={() => setBillingType(m.type)}
+              className={`flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all ${
+                billingType === m.type
+                  ? 'border-[var(--color-lime)] bg-[#F5FFCC] shadow-md'
+                  : 'border-gray-200 hover:border-[var(--color-lime-dark)]'
+              }`}
+            >
+              <m.icon size={22} className={billingType === m.type ? 'text-[var(--color-navy)]' : 'text-gray-400'} />
+              <span className={`text-sm font-bold ${billingType === m.type ? 'text-[var(--color-navy)]' : 'text-gray-500'}`}>{m.label}</span>
+              <span className="text-[10px] text-gray-400">{m.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Formulário de cartão */}
+      {billingType === 'CREDIT_CARD' && (
+        <Card className="shadow-xl rounded-2xl">
+          <CardContent className="space-y-5 p-6">
+            {/* Dados do cartão */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <CreditCard className="h-4 w-4 text-[var(--color-muted)]" />
+                <span className="text-sm font-medium">Dados do Cartão</span>
+              </div>
+              <div className="space-y-3">
+                <Input placeholder="Nome impresso no cartão" value={cardName} onChange={(e) => setCardName(e.target.value)} />
+                <Input placeholder="Número do cartão" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} inputMode="numeric" />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input placeholder="MM/AA" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} />
+                  <Input placeholder="CVV" value={cardCvv} onChange={(e) => setCardCvv(e.target.value)} inputMode="numeric" maxLength={4} />
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Dados do titular */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <User className="h-4 w-4 text-[var(--color-muted)]" />
+                <span className="text-sm font-medium">Titular do Cartão</span>
+              </div>
+              <div className="space-y-3">
+                <Input placeholder="CPF ou CNPJ" value={cardCpf} onChange={(e) => setCardCpf(e.target.value)} inputMode="numeric" />
+                <Input placeholder="Telefone com DDD" value={cardPhone} onChange={(e) => setCardPhone(e.target.value)} inputMode="numeric" />
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Endereço de cobrança */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin className="h-4 w-4 text-[var(--color-muted)]" />
+                <span className="text-sm font-medium">Endereço de Cobrança</span>
+              </div>
+              <Input placeholder="CEP" value={cardCep} onChange={(e) => setCardCep(e.target.value)} inputMode="numeric" />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Empresa */}
       {profile?.empresa_id && (
@@ -186,11 +350,15 @@ export default function CheckoutPage() {
         className="w-full gap-2 bg-[var(--color-navy)] py-6 text-lg font-bold"
         size="lg"
       >
-        {loading ? 'Redirecionando ao Mercado Pago...' : 'Assinar agora'}
+        {loading
+          ? billingType === 'CREDIT_CARD' ? 'Processando...' : 'Gerando cobrança...'
+          : 'Assinar agora'
+        }
       </Button>
       <p className="text-center text-xs text-[var(--color-muted)]">
-        Pagamento seguro via Mercado Pago. Cancele quando quiser.
+        Pagamento seguro via Asaas. Cancele quando quiser.
       </p>
     </div>
+    </>
   )
 }

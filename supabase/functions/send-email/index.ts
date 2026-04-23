@@ -23,6 +23,19 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     )
 
+    // Verificar autenticação (JWT do usuário ou chamada interna via service role)
+    const authHeader = req.headers.get("Authorization")
+    if (authHeader) {
+      const { error: authError } = await supabase.auth.getUser(
+        authHeader.replace("Bearer ", "")
+      )
+      if (authError) throw new Error("Não autenticado")
+    } else {
+      // Sem header = chamada interna (billing-collection, etc) — aceitar apenas se veio do próprio Supabase
+      const apiKey = req.headers.get("apikey")
+      if (!apiKey) throw new Error("Não autenticado")
+    }
+
     const { to, template_name, subject, html, variables }: EmailRequest = await req.json()
 
     // Buscar API key do Resend

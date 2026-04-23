@@ -62,7 +62,7 @@ export default function AdminConfigPage() {
   const categories = [...new Set(settings.map((s) => s.category))].filter((c) => c !== 'whatsapp')
 
   const handleAddKey = async (category: string) => {
-    const key = prompt('Nome da chave (ex: MP_ACCESS_TOKEN):')
+    const key = prompt('Nome da chave (ex: ASAAS_API_KEY):')
     if (!key) return
     const value = prompt('Valor:')
     if (value === null) return
